@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,8 +14,36 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: 'inherit',
     height: '75vh',
-    paddingLeft: '20px',
+    width: '50vw',
+    margin: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
     alignContent: 'center',
+  },
+
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginWord: {
+    color: '#fff',
+    textAlign: 'center',
+  },
+  textfield: {
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'black',
+    },
+    '& label.Mui-focused': {
+      color: 'black',
+    },
+    width: '15em',
+    marginBottom: theme.spacing(2),
+  },
+  submitButton: {
+    marginTop: theme.spacing(2),
   },
 }));
 function Login() {
@@ -24,11 +52,29 @@ function Login() {
     <div className={classes.root}>
       <Navbar />
       <Box className={classes.container} component="div" maxWidth="sm">
-        <Typography variant="h3" gutterBottom>
+        <Typography className={classes.loginWord} variant="h3" gutterBottom>
           Login
         </Typography>
+        <br />
         <form className={classes.form}>
-          <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+          <TextField
+            className={classes.textfield}
+            id="outlined-basic"
+            label="Username"
+            variant="standard"
+            color="primary"
+            autoFocus
+          />
+          <TextField
+            className={classes.textfield}
+            id="outlined-basic"
+            label="Password"
+            variant="standard"
+            type="password"
+          />
+          <Button className={classes.submitButton} variant="contained">
+            Submit
+          </Button>
         </form>
       </Box>
     </div>

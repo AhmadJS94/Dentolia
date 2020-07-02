@@ -3,7 +3,7 @@ import { Typography, Button } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,10 +49,6 @@ const useStyles = makeStyles(theme => ({
       color: 'inherit',
     },
   },
-  link: {
-    textDecoration: 'none',
-    color: 'inherit',
-  },
 }));
 export default function Hero() {
   const classes = useStyles();
@@ -73,6 +69,8 @@ export default function Hero() {
             variant="contained"
             size="medium"
             color="secondary"
+            component={RouterLink}
+            to="/pricing"
           >
             See Pricing
           </Button>
@@ -81,6 +79,8 @@ export default function Hero() {
             variant="contained"
             size="medium"
             color="secondary"
+            component={RouterLink}
+            to="/tutorial"
           >
             See a Tutorial
           </Button>
@@ -92,20 +92,20 @@ export default function Hero() {
           variant="contained"
           size="large"
           color="secondary"
+          component={RouterLink}
+          to="/login"
         >
-          <Link className={classes.link} to="/login">
-            Login
-          </Link>
+          Login
         </Button>
         <Button
           className={`${classes.button}`}
           variant="contained"
           size="large"
           color="secondary"
+          component={RouterLink}
+          to="/signup"
         >
-          <Link className={classes.link} to="/signup">
-            Signup
-          </Link>
+          Signup
         </Button>
       </div>
     </div>
