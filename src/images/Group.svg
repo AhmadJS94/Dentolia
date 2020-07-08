@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50.589" height="100.103" viewBox="0 0 151.589 272.103">
+  <defs>
+    <filter id="Path_1" x="0" y="141.881" width="151.589" height="130.221" filterUnits="userSpaceOnUse">
+      <feOffset dx="2" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#292626" flood-opacity="0.58"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Path_2" x="8.396" y="0" width="122.608" height="176.021" filterUnits="userSpaceOnUse">
+      <feOffset dx="2" dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur-2"/>
+      <feFlood flood-color="#e5e5e5" flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_1" data-name="Group 1" transform="translate(-232.819 -199.09)">
+    <g transform="matrix(1, 0, 0, 1, 232.82, 199.09)" filter="url(#Path_1)">
+      <path id="Path_1-2" data-name="Path 1" d="M1497.189,264.619c18.208,10.412,35-21.29,54.99-20.8s22.815,24.7,40.857,19.332,21.641-17.312,20.775-48.475-10.3-42.127-20.775-50-17.663,3.189-42.733,5.627-28.883-24.757-53.115-10.878c-13.278,8.627-14.148,7.615-14.952,35.923C1480.48,216.889,1478.981,254.207,1497.189,264.619Z" transform="translate(-1473.82 -7.09)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 232.82, 199.09)" filter="url(#Path_2)">
+      <path id="Path_2-2" data-name="Path 2" d="M1592.748,165.334s-2.236-17.038-2.981-40.892,3.633-27.072,0-54.523S1578.4,4.889,1567.411,15.4s-6.427,95.6-21.611,96.551-24.965-106.112-39.124-92.765-17.513,144.709-17.513,144.709,10.165-7.328,16.653-7.669,5.341-1.277,12.122,1.537,7.8,5.556,14.219,8.73,5.266,3.1,11.83,3.751,3.823,1.01,14.427-1.154,20.818-7.57,27.305-6.546S1592.748,165.334,1592.748,165.334Z" transform="translate(-1473.24 -7.09)" fill="#e2e2e2" stroke="#707070" stroke-width="1"/>
+    </g>
+  </g>
+</svg>

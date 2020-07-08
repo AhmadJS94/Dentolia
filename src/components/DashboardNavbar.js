@@ -118,6 +118,9 @@ export default function DashboardNavbar() {
             alignItems="center"
           >
             <Grid item xs="auto" sm="auto">
+              <Button component={RouterLink} to="/patients" color="inherit">
+                Patients
+              </Button>
               <Button component={RouterLink} to="/logout" color="inherit">
                 Logout
               </Button>

@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardNavbar from '../components/DashboardNavbar';
 import EditIcon from '@material-ui/icons/Edit';
+import Tooth from '../vectors/Tooth';
 import {
   Paper,
   Grid,
@@ -57,6 +58,8 @@ export default function Dashboard() {
           </Paper>
         </Grid>
       </Grid>
+      {/* <img src={svg} alt="" /> */}
+      <Tooth />
     </div>
   );
 }
