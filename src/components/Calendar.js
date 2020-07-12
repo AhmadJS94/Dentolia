@@ -1,159 +1,290 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Paper, Typography } from '@material-ui/core';
-import CalendarHeader from './CalendarItems/CalendarHeader';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import moment from 'moment';
+import MonthView from './CalendarItems/MonthView';
+import WeekView from './CalendarItems/WeekView';
+import DayView from './CalendarItems/DayView';
+import { Tooltip, Typography } from '@material-ui/core';
+import Zoom from '@material-ui/core/Zoom';
 
-const daysOfWeek = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-
-const generateGrids = () => {
-  let count = 0;
-  const daysOfMonth = [];
-  for (let day = 0; count <= 35; day++, count++) {
-    daysOfMonth.push(day);
-    if (day === 31) {
-      day = -1;
-    }
-  }
-
-  return daysOfMonth;
-};
-
-//number of days in the month -- month 1 is Jan here
-
-const getFirstDayOfMonth = i => {
-  const day = new Date(2020, 6, i).getDay();
-  // console.log(`day is ${day}`);
-  return day;
-};
-const getNumberOfDaysInAMonth = (date, month) => {
-  const days = new Date(date, month, 0).getDate();
-  let arr = [];
-  for (let i = 1; i <= days; i++) {
-    arr.push(i);
-  }
-  return arr;
-};
-//the name of the day -- 0 is sunday
-const mapNumbersToDays = input => {
-  let day = '';
-  switch (input) {
-    default:
-      day = null;
-      break;
-    case 0:
-      day = 'Sunday';
-      break;
-    case 1:
-      day = 'Monday';
-      break;
-    case 2:
-      day = 'Tuesday';
-      break;
-    case 3:
-      day = 'Wednesday';
-      break;
-    case 4:
-      day = 'Thursday';
-      break;
-    case 5:
-      day = 'Friday';
-      break;
-    case 6:
-      day = 'Saturday';
-  }
-  console.log(day);
-  return day;
-};
+const LightTooltip = withStyles(theme => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.8)',
+    boxShadow: theme.shadows[1],
+    fontSize: 16,
+  },
+}))(Tooltip);
 const useStyles = makeStyles(theme => ({
-  container: {
-    // width: '100%',
-
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7,1fr)',
-    gridTemplateRows: '30px 80px 80px 80px 80px 80px',
-    gridGap: 0,
+  cells: {
+    padding: '7px',
+    background: ' #222227',
+    color: '#eee',
+    fontSize: '1.5em',
+    cursor: 'pointer',
+    '&:hover': {
+      background: '#51515d',
+    },
+    transition: 'background ease 0.2s',
   },
-  daysOfWeek: {
-    backgroundColor: '#f8f8ff',
-    width: 'auto',
+  prevCells: {
+    background: ' #222227',
+    color: 'rgba(241, 245, 254, 0.5)',
+  },
+  nextCells: {
+    background: ' #222227',
+    color: 'rgba(241, 245, 254, 0.5)',
+  },
+  today: {
+    background: '#167e56',
+    // width: '15px',
     // height: '15px',
-    borderLeft: '1px solid #666',
+    // borderRadius: '50%',
+    // textAlign: 'center',
+    // padding: '3px 10px',
   },
-
-  day: {
-    backgroundColor: '#f8f8ff',
-    width: 'auto',
-    height: 'auto',
-    borderLeft: '1px solid #666',
-  },
+  tooltip: { background: '#f5f5f9' },
 }));
 export default function Calendar() {
-  const [noOfDay, setNoOfDay] = useState(1);
   const classes = useStyles();
-  let count = 0;
-  let count2 = 0;
-  const increment = count2 => {
-    if (count2 === 0) {
-      return;
-    }
-    count++;
-  };
-  return (
-    <div style={{ padding: '20px' }}>
-      <CalendarHeader />
-      <div className={classes.container}>
-        {daysOfWeek.map(day => (
-          <div className={classes.daysOfWeek}>
-            <Typography variant="subtitle2">{day}</Typography>
-          </div>
-        ))}
-        {generateGrids().map((day, i) => {
-          var result;
 
-          console.log(`${i}st iteration`);
-          if (day === getFirstDayOfMonth(count)) {
-            console.log('worked');
-            result = getNumberOfDaysInAMonth(2020, 7)[count];
-            console.log(`count is ${count}`);
-            increment(count2);
-            count2++;
-          }
-          return (
-            <div key={i} className={classes.day}>
-              {day === getFirstDayOfMonth(count) ? result : ''}
-            </div>
-          );
-        })}
-        {/* <Grid className={classes.day} item>
-          1
-        </Grid>
-        <Grid className={classes.day} item>
-          2
-        </Grid>
-        <Grid className={classes.day} item>
-          3
-        </Grid>
-        <Grid className={classes.day} item>
-          4
-        </Grid>
-        <Grid className={classes.day} item>
-          5
-        </Grid>
-        <Grid className={classes.day} item>
-          6
-        </Grid>
-        <Grid className={classes.day} item>
-          7
-        </Grid> */}
-      </div>
+  const [isMonthView, setMonthView] = useState(false);
+
+  const [isWeekView, setWeekView] = useState(true);
+
+  const [isDayView, setDayView] = useState(false);
+
+  const [date, setDate] = useState({ date: moment() });
+
+  const lastDateOfCurrentMonth = moment()
+    .year(date.date.year())
+    .month(date.date.month())
+    .endOf('month')
+    .date();
+
+  const firstDateOfWeek = moment()
+    .year(date.date.year())
+    .month(date.date.month())
+    .week(date.date.week())
+    .startOf('week')
+    .date();
+
+  const todayIndex = moment().date();
+  const lastDayOfCurrentWeek = moment()
+    .date(date.date.date())
+    .endOf('week')
+    .day();
+
+  let firstDateInMonth = moment()
+    .year(date.date.year())
+    .month(date.date.month())
+    .startOf('month')
+    .date();
+  const firstDateNextMonth = moment()
+    .year(date.date.year())
+    .month(date.date.month() + 1)
+    .startOf('month')
+    .date();
+  const lastDateOfPrevMonth = moment()
+    .year(date.date.year())
+    .month(date.date.month() - 1)
+    .endOf('month')
+    .date();
+
+  const firstDayIndex = moment()
+    .year(date.date.year())
+    .month(date.date.month())
+    .startOf('month')
+    .day();
+
+  const lastDayIndex = moment()
+    .year(date.date.year())
+    .month(date.date.month())
+    .endOf('month')
+    .day();
+
+  const thisMonthDays = moment()
+    .year(date.date.year())
+    .month(date.date.month() - 1)
+    .endOf('month')
+    .date();
+
+  const nextDays = 7 - lastDayIndex - 1;
+
+  const generatePrevCells = () => {
+    let days = [];
+    for (let x = firstDayIndex; x > 0; x--) {
+      days.push(
+        <LightTooltip
+          title={'No Appointments Today'}
+          TransitionComponent={Zoom}
+          enterDelay={500}
+          key={x}
+        >
+          <div
+            onClick={handleClickInMonthView}
+            className={`${classes.prevCells} ${classes.cells}`}
+          >
+            {lastDateOfPrevMonth - x + 1}
+          </div>
+        </LightTooltip>
+      );
+    }
+    return days;
+  };
+  // handling Clicks on days in Month View
+  // HINT : DOESN'T WORK ON PREVIOUS AND NEXT YEARS
+  //try adding SELECTED state
+  const handleClickInMonthView = e => {
+    let date = e.target.textContent;
+    let className = e.target.classList;
+    console.log(date);
+    setDayView(true);
+    setMonthView(false);
+    if (className[0] === 'makeStyles-prevCells-7') {
+      setDate({
+        date: moment().year(date.date.year()).subtract(1, 'month').date(date),
+      });
+    } else if (className[0] === 'makeStyles-cells-6') {
+      setDate({ date: moment().year(date.date.year()).date(date) });
+    } else if (className[0] === 'makeStyles-nextCells-8') {
+      setDate({
+        date: moment().year(date.date.year()).add(1, 'month').date(date),
+      });
+    }
+  };
+  const generateCells = () => {
+    let days = [];
+    for (let i = 1; i <= lastDateOfCurrentMonth; i++) {
+      const today =
+        i === todayIndex &&
+        moment().month() === date.date.month() &&
+        moment().year() === date.date.year();
+      days.push(
+        <LightTooltip
+          title={'No Appointments Today'}
+          TransitionComponent={Zoom}
+          enterDelay={500}
+          key={i}
+        >
+          <div
+            onClick={handleClickInMonthView}
+            className={
+              today ? `${classes.cells} ${classes.today}` : classes.cells
+            }
+          >
+            {i}
+          </div>
+        </LightTooltip>
+      );
+    }
+    return days;
+  };
+
+  const generateNextCells = () => {
+    let days = [];
+    for (let j = 1; j <= nextDays; j++) {
+      days.push(
+        <LightTooltip
+          title={'No Appointments'}
+          TransitionComponent={Zoom}
+          enterDelay={500}
+          key={j}
+        >
+          <div
+            onClick={handleClickInMonthView}
+            className={`${classes.nextCells} ${classes.cells}`}
+          >
+            {j}
+          </div>
+        </LightTooltip>
+      );
+    }
+    return days;
+  };
+  /////////////////
+  const datesOfMonth = () => {
+    let arr = [];
+    let first = firstDateInMonth;
+    let lastPrev = lastDateOfPrevMonth;
+    let firstNext = firstDateNextMonth;
+    for (let i = 0; i < 35; i++) {
+      if (i < firstDayIndex) {
+        arr.unshift(lastPrev);
+        lastPrev--;
+      } else if (i >= firstDayIndex && i <= thisMonthDays) {
+        arr.push(first);
+        first++;
+      } else if (i > thisMonthDays) {
+        arr.push(firstNext);
+        firstNext++;
+      }
+    }
+    return arr;
+  };
+  const generateDays = () => {
+    let rows = [];
+    let days = datesOfMonth();
+    for (let i = 0; i < 35; i++) {
+      const today =
+        i === todayIndex &&
+        moment().month() === date.date.month() &&
+        moment().year() === date.date.year();
+      rows.push(
+        <div key={i} className={classes.cells}>
+          <span className={`${today && classes.today}`}>{days[i]}</span>
+        </div>
+      );
+    }
+    return rows;
+  };
+
+  return (
+    <div style={{ padding: '0 75px', borderRadius: '20px' }}>
+      {isWeekView && (
+        <WeekView
+          isWeekView={isWeekView}
+          isMonthView={isMonthView}
+          setMonthView={setMonthView}
+          setWeekView={setWeekView}
+          isDayView={isDayView}
+          setDayView={setDayView}
+          date={date}
+          setDate={setDate}
+          todayIndex={todayIndex}
+          firstDateOfWeek={firstDateOfWeek}
+          firstDateInMonth={firstDateInMonth}
+          thisMonthDays={thisMonthDays}
+        />
+      )}
+      {isMonthView && (
+        <MonthView
+          generateCells={generateCells}
+          generateNextCells={generateNextCells}
+          generatePrevCells={generatePrevCells}
+          date={date}
+          setDate={setDate}
+          isWeekView={isWeekView}
+          isMonthView={isMonthView}
+          setMonthView={setMonthView}
+          setWeekView={setWeekView}
+          isDayView={isDayView}
+          setDayView={setDayView}
+          generateDays={generateDays}
+        />
+      )}
+      {isDayView && (
+        <DayView
+          date={date}
+          setDate={setDate}
+          isWeekView={isWeekView}
+          isMonthView={isMonthView}
+          setMonthView={setMonthView}
+          setWeekView={setWeekView}
+          isDayView={isDayView}
+          setDayView={setDayView}
+        />
+      )}
     </div>
   );
 }

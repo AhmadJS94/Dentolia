@@ -8,8 +8,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     boxShadow: 'none',
-    backgroundColor: '#3a5ad9',
+    backgroundColor: '#c93e2c',
     minHeight: '100vh',
+    fontFamily: 'Quicksand , sans-serif',
   },
 }));
 export default function Appointments() {
@@ -18,7 +19,6 @@ export default function Appointments() {
     <div className={classes.root}>
       <DashboardNavbar />
       <Calendar />
-      {/* <CalendarTest /> */}
     </div>
   );
 }
