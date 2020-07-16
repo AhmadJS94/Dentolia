@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
+import { KeyboardDatePicker, DatePicker } from '@material-ui/pickers';
+
 import {
   Typography,
   Grid,
@@ -56,16 +58,24 @@ export default function CalendarHeader({
 }) {
   const firstDateOfCurrentWeek = date
     .clone()
+    .year(date.year())
+    .month(date.month())
     .week(date.week())
     .startOf('week')
     .date();
   const lastDateOfCurrentWeek = date
     .clone()
+    .year(date.year())
+    .month(date.month())
     .week(date.week())
     .endOf('week')
     .date();
   const classes = useStyles();
   const condition = lastDateOfCurrentWeek > 0 && lastDateOfCurrentWeek < 7;
+  const yearCondition =
+    date.month() === 11 &&
+    lastDateOfCurrentWeek > 0 &&
+    lastDateOfCurrentWeek < 7;
   console.log('month view ' + isMonthView);
   console.log(' weekview' + isWeekView);
   console.log('day view' + isDayView);
@@ -99,21 +109,43 @@ export default function CalendarHeader({
         </div>
         <div>
           {isMonthView && (
-            <Button>{date.format('MMMM YYYY').toString()}</Button>
+            <Button>
+              {date.clone().year(date.year()).format('MMMM YYYY').toString()}
+            </Button>
           )}
           {isWeekView && (
             <Button>{`${
               condition
-                ? date.clone().subtract(1, 'month').format('MMMM')
+                ? date
+                    .clone()
+                    .year(date.year())
+                    .month(date.month())
+                    .format('MMMM')
                 : date.format('MMMM')
-            } ${firstDateOfCurrentWeek}-${
-              condition ? date.clone().format('MMMM') : lastDateOfCurrentWeek
-            } ${
-              condition ? lastDateOfCurrentWeek : ''
-            }, ${date.year()}`}</Button>
+            } ${firstDateOfCurrentWeek}${
+              yearCondition ? `, ${date.clone().year()}` : ''
+            } - ${
+              condition
+                ? date.clone().year(date.year()).add(1, 'month').format('MMMM')
+                : lastDateOfCurrentWeek
+            } ${condition ? lastDateOfCurrentWeek : ''}, ${
+              yearCondition ? date.clone().year() + 1 : date.clone().year()
+            }`}</Button>
           )}
           {isDayView && <Button>{`${date.format('MMMM D, YYYY')}`}</Button>}
         </div>
+        {/* <div>
+          <KeyboardDatePicker
+            disableToolbar
+            variant="inline"
+            format="MM/dd/yyyy"
+            margin="normal"
+            id="date-picker-inline"
+            KeyboardButtonProps={{
+              'aria-label': 'change date',
+            }}
+          />
+        </div> */}
       </Grid>
       <Grid item xs={6} className={classes.targets}>
         <Button
@@ -149,6 +181,7 @@ export default function CalendarHeader({
               setWeekView(true);
               setMonthView(false);
               setDayView(false);
+              // setDate({ date: moment().month(date.month()) });
             }
           }}
           className={classes.buttons}

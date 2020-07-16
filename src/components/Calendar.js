@@ -7,6 +7,12 @@ import DayView from './CalendarItems/DayView';
 import { Tooltip, Typography } from '@material-ui/core';
 import Zoom from '@material-ui/core/Zoom';
 
+moment.updateLocale('en', {
+  week: {
+    dow: 0, // First day of week is Sunday
+    doy: 0, // First week of year must contain 7 January (7 + 0 - 1)
+  },
+});
 const LightTooltip = withStyles(theme => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
@@ -70,10 +76,12 @@ export default function Calendar() {
     .date();
 
   const todayIndex = moment().date();
-  const lastDayOfCurrentWeek = moment()
-    .date(date.date.date())
+  const lastDateOfCurrentWeek = moment()
+    .year(date.date.year())
+    .month(date.date.month())
+    .week(date.date.week())
     .endOf('week')
-    .day();
+    .date();
 
   let firstDateInMonth = moment()
     .year(date.date.year())
@@ -105,7 +113,7 @@ export default function Calendar() {
 
   const thisMonthDays = moment()
     .year(date.date.year())
-    .month(date.date.month() - 1)
+    .month(date.date.month())
     .endOf('month')
     .date();
 
@@ -255,6 +263,7 @@ export default function Calendar() {
           firstDateOfWeek={firstDateOfWeek}
           firstDateInMonth={firstDateInMonth}
           thisMonthDays={thisMonthDays}
+          lastDateOfCurrentWeek={lastDateOfCurrentWeek}
         />
       )}
       {isMonthView && (

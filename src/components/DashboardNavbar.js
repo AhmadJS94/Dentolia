@@ -15,13 +15,16 @@ import {
   Grid,
   Modal,
   TextField,
+  IconButton,
 } from '@material-ui/core/';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/';
 import { Link } from 'react-router-dom';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { Link as RouterLink } from 'react-router-dom';
-const options = ['Check-in patient', 'Quick check-in', 'Check-in new patient'];
+// const options = ['Check-in patient', 'Quick check-in', 'Check-in new patient'];
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -31,10 +34,7 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
   },
-  link: {
-    textDecoration: 'none',
-    color: 'inherit',
-  },
+
   modal: {
     position: 'absolute',
     width: 700,
@@ -49,6 +49,48 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
+
+  toolbar: { minHeight: '64px' },
+  title: {
+    flexGrow: 1,
+  },
+  link: {
+    textDecoration: 'none',
+    color: 'inherit',
+    textAlign: 'center',
+    cursor: 'pointer',
+  },
+  hidden: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+  },
+  menu: {
+    padding: '0',
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  patientsHidden: {
+    ['@media (max-width:250px)']: {
+      display: 'none',
+    },
+  },
+  appointmentsHidden: {
+    ['@media (max-width:360px)']: {
+      display: 'none',
+    },
+  },
+  patientsHiddenMenu: {
+    ['@media (min-width:250px)']: {
+      display: 'none',
+    },
+  },
+  appointmentsHiddenMenu: {
+    ['@media (min-width:300px)']: {
+      display: 'none',
+    },
+  },
 }));
 
 export default function DashboardNavbar() {
@@ -58,30 +100,37 @@ export default function DashboardNavbar() {
   const [open, setOpen] = useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const handleCheckInClick = event => {
-    event.preventDefault();
-    if (event.target.textContent === 'Check-in patient') {
-      setCheckInModalOpen(true);
-    } else if (event.target.textContent === 'Quick check-in') {
-      setQuickCheckInModalOpen(true);
-    }
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
   };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  // const handleCheckInClick = event => {
+  //   event.preventDefault();
+  //   if (event.target.textContent === 'Check-in patient') {
+  //     setCheckInModalOpen(true);
+  //   } else if (event.target.textContent === 'Quick check-in') {
+  //     setQuickCheckInModalOpen(true);
+  //   }
+  // };
 
-  const handleMenuItemClick = (event, index) => {
-    setSelectedIndex(index);
-    setOpen(false);
-  };
+  // const handleMenuItemClick = (event, index) => {
+  //   setSelectedIndex(index);
+  //   setOpen(false);
+  // };
 
-  const handleToggle = () => {
-    setOpen(prevOpen => !prevOpen);
-  };
+  // const handleToggle = () => {
+  //   setOpen(prevOpen => !prevOpen);
+  // };
 
-  const handleClose = event => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-    setOpen(false);
-  };
+  // const handleClose = event => {
+  //   if (anchorRef.current && anchorRef.current.contains(event.target)) {
+  //     return;
+  //   }
+  //   setOpen(false);
+  // };
   const handleModalClose = () => {
     setCheckInModalOpen(false);
     setQuickCheckInModalOpen(false);
@@ -104,39 +153,100 @@ export default function DashboardNavbar() {
         {modalBody}
       </Modal>
       <AppBar className={classes.root} position="static">
-        <Toolbar>
+        <Toolbar className={classes.toolbar}>
           <Typography variant="h6" className={classes.title}>
             <Link className={classes.link} to="/">
               DontoHub
             </Link>
           </Typography>
-          <Grid
-            container
-            spacing={1}
-            justify="flex-end"
-            direction="row"
-            alignItems="center"
+
+          <Button
+            component={Link}
+            className={`${classes.link} ${classes.patientsHidden}`}
+            to="/patients"
           >
-            <Grid item xs="auto" sm="auto">
-              <Button component={RouterLink} to="/patients" color="inherit">
+            Patients
+          </Button>
+          <Button
+            component={Link}
+            className={`${classes.link} ${classes.appointmentsHidden}`}
+            to="/appointments"
+          >
+            Appointments
+          </Button>
+
+          <IconButton className={classes.menu} onClick={handleClick}>
+            <MoreVertIcon size="small" />
+          </IconButton>
+          <Menu
+            variant="selectedMenu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem
+              component={Link}
+              to="/patients"
+              className={classes.patientsHiddenMenu}
+              onClick={handleClose}
+            >
+              <Link className={`${classes.link}`} color="inherit">
                 Patients
-              </Button>
-              <Button component={RouterLink} to="/logout" color="inherit">
-                Logout
-              </Button>
-              <Button component={RouterLink} to="/inventory" color="inherit">
-                Inventory
-              </Button>
-              <Button
-                className={classes.grid}
-                component={RouterLink}
-                to="/appointments"
-                color="inherit"
-              >
+              </Link>
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to="/appointments"
+              className={classes.appointmentsHiddenMenu}
+              onClick={handleClose}
+            >
+              <Link className={`${classes.link}`} color="inherit">
                 Appointments
-              </Button>
-            </Grid>
-            <Grid item xs="auto" sm="auto">
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link className={classes.link} component={Link} color="inherit">
+                Lab
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link className={classes.link} component={Link} color="inherit">
+                Inventory
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link className={classes.link} component={Link} color="inherit">
+                Settings
+              </Link>
+            </MenuItem>
+          </Menu>
+          <Button
+            component={Link}
+            className={`${classes.hidden} ${classes.link}`}
+          >
+            Lab
+          </Button>
+          <Button
+            component={Link}
+            className={`${classes.hidden} ${classes.link}`}
+          >
+            Inventory
+          </Button>
+          <Button
+            component={Link}
+            className={`${classes.hidden} ${classes.link}`}
+          >
+            Settings
+          </Button>
+        </Toolbar>
+      </AppBar>
+    </div>
+  );
+}
+
+{
+  /* <Grid item xs="auto" sm="auto">
               <ButtonGroup
                 variant="contained"
                 color="secondary"
@@ -198,10 +308,5 @@ export default function DashboardNavbar() {
                   </Grow>
                 )}
               </Popper>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
+            </Grid> */
 }

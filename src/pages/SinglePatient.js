@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+  AppBar,
+  Box,
+  Tab,
+  Tabs,
   List,
   ListItemIcon,
   ListItem,
@@ -20,6 +24,20 @@ import GeneralInfoCard from '../components/SinglePatientComponents/GeneralInfoCa
 import MedicalRecordCard from '../components/SinglePatientComponents/MedicalRecordCard';
 import DentalInfoCard from '../components/SinglePatientComponents/DentalInfoCard';
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && <>{children}</>}
+    </div>
+  );
+}
 const useStyles = makeStyles(theme => ({
   '@global': {
     '*::-webkit-scrollbar': {
@@ -36,7 +54,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
 
-    backgroundColor: '#3a5ad9',
+    background: 'linear-gradient(45deg,#07AFAF,#7037D2)',
+
     minHeight: '100vh',
   },
   mainContainer: {
@@ -58,8 +77,10 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   patientName: {
-    fontFamily: 'Raleway',
     color: '#fff',
+  },
+  patientNameBox: {
+    marginBottom: '2em',
   },
   id: {
     fontSize: '20px',
@@ -70,18 +91,38 @@ const useStyles = makeStyles(theme => ({
 
 export default function SinglePatient() {
   const classes = useStyles();
+  const [value, setValue] = useState(1);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <div className={classes.root}>
       <DashboardNavbar />
       <div className={classes.mainContainer}>
-        <div>
+        <div className={classes.patientNameBox}>
           <Typography className={classes.patientName} variant="h2">
             Ahmad Zaaza <span className={classes.id}>#26658975</span>
           </Typography>
         </div>
-        <br />
-        <Grid container spacing={1}>
+        <AppBar position="static">
+          <Tabs variant="fullWidth" value={value} onChange={handleChange}>
+            <Tab label="General Info" />
+            <Tab label="Medical Info" />
+            <Tab label="Dental Info" />
+          </Tabs>
+        </AppBar>
+        <TabPanel value={value} index={0}>
           <GeneralInfoCard />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <MedicalRecordCard />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <Button>hi</Button>
+        </TabPanel>
+
+        {/* <Grid container spacing={1}>
+         <GeneralInfoCard />
           <MedicalRecordCard style={classes} />
           <DentalInfoCard />
           <Grid item xs="12" sm="3">
@@ -122,7 +163,7 @@ export default function SinglePatient() {
 
         <Paper elevation="1" style={{ background: '#178c97' }}>
           <Tooth />
-        </Paper>
+        </Paper> */}
       </div>
     </div>
   );

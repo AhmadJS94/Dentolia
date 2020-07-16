@@ -12,7 +12,8 @@ import NewPatient from './pages/NewPatient';
 import Appointments from './pages/Appointments';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
-
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 import './App.css';
 const theme = createMuiTheme({
   typography: {
@@ -31,19 +32,25 @@ const theme = createMuiTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <CssBaseline>
-          <Route exact path="/" component={Main} />
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route exact path="/patients" component={PatientsList} />
-          <Route exact path="/patients/ahmadzaaza" component={SinglePatient} />
-          <Route exact path="/patients/new" component={NewPatient} />
-          <Route path="/table" component={EnhancedTable} />
-          <Route path="/appointments" component={Appointments} />
-        </CssBaseline>
-      </Router>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Router>
+          <CssBaseline>
+            <Route exact path="/" component={Main} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route exact path="/patients" component={PatientsList} />
+            <Route
+              exact
+              path="/patients/ahmadzaaza"
+              component={SinglePatient}
+            />
+            <Route exact path="/patients/new" component={NewPatient} />
+            <Route path="/table" component={EnhancedTable} />
+            <Route path="/appointments" component={Appointments} />
+          </CssBaseline>
+        </Router>
+      </MuiPickersUtilsProvider>
     </ThemeProvider>
   );
 }

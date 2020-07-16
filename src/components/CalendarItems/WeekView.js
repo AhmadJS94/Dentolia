@@ -79,19 +79,11 @@ export default function WeekView({
   firstDateInMonth,
   todayIndex,
   firstDateOfWeek,
+  lastDateOfCurrentWeek,
   thisMonthDays,
 }) {
   const classes = useStyles();
-  const days = [
-    '',
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
+  const days = ['', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const hours = [
     '12:00 AM',
     '01:00 AM',
@@ -123,14 +115,15 @@ export default function WeekView({
   const datesOfWeek = () => {
     let arr = [firstDateOfWeek];
     let first = firstDateOfWeek + 1;
+    let firstMonth = firstDateInMonth;
     for (let i = 5; i >= 0; i--, first++) {
       if (first > 0 && first <= thisMonthDays) arr.push(first);
       if (first > thisMonthDays) {
-        arr.push(firstDateInMonth);
-        firstDateInMonth++;
+        arr.push(firstMonth);
+        firstMonth++;
       }
     }
-    console.log(arr);
+    // console.log(arr);
     return arr;
   };
   const generateDays = () => {
@@ -148,27 +141,33 @@ export default function WeekView({
   };
   let appointment = {
     name: 'Ahmad Zaaza',
-    time: '05:00 PM',
+    time: '05:00 AM',
     duration: '1 hour',
-    date: '12/6/2020',
-    day: 'Sunday',
+    date: '31/7/2020',
+    day: 'Friday',
   };
   const condition = (appointment, i, j) => {
     let num = appointment.date.split('/')[0];
-    let month = appointment.date.split('/')[1];
+    let month = appointment.date.split('/')[1] - 1;
     let year = appointment.date.split('/')[2];
     let time = appointment.time;
     let day = appointment.day;
-
+    let arr = datesOfWeek();
+    // for (i = 0; i < arr.length; i++) {
+    // console.log(month === date.date.month());
+    // console.log(date.date.month().toString());
+    // console.log(month);
     if (
-      num === date.date.date().toString() &&
-      month === date.date.month().toString() &&
-      year === date.date.year().toString() &&
+      num === arr[j].toString() &&
+      // num === date.date.date().toString() &&
+      month.toString() === date.date.clone().month().toString() &&
+      year === date.date.clone().year().toString() &&
       time === hours[i] &&
       day === days[j + 1]
     ) {
       return appointment.name;
     }
+    // }
   };
   const generateRows = appointment => {
     let rows = [];
