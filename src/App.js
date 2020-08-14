@@ -1,9 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
 import Main from './pages/Main';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Dashboard from './pages/Dashboard';
 import PatientsList from './pages/PatientsList';
 import EnhancedTable from './pages/Table';
@@ -15,9 +19,22 @@ import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import './App.css';
+import Lab from './pages/Lab';
+import NewLab from './pages/NewLab';
+import SingleLab from './pages/SingleLab';
+import Vector from './pages/Vector';
+import NewForm from './pages/NewForm';
+import DentalInfoCard from './components/SinglePatientComponents/DentalInfoCard';
+import Auth from './Auth';
+
+import ProtectedRoute from './ProtectedRoute';
+import NotAuthorized from './pages/NotAuthorized';
+import UserDataContext from './Contexts/UserDataContext';
+
 const theme = createMuiTheme({
   typography: {
     fontFamily: [
+      'Montserrat',
       'Quicksand',
       'Roboto',
       '"Helvetica Neue"',
@@ -33,23 +50,63 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Router>
-          <CssBaseline>
+        <UserDataContext>
+          <Switch>
             <Route exact path="/" component={Main} />
-            <Route path="/login" component={Login} />
-            <Route path="/signup" component={Signup} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route exact path="/patients" component={PatientsList} />
-            <Route
+            {/* {localStorage.token && (
+              <Redirect exact from="/login" to="/dashboard" />
+            )} */}
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={Signup} />
+            <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+
+            <ProtectedRoute exact path="/patients" component={PatientsList} />
+            <ProtectedRoute exact path="/patients/new" component={NewPatient} />
+            <Redirect
               exact
-              path="/patients/ahmadzaaza"
+              from="/patients/:_id/dental"
+              to="/patients/:_id/dental/chart"
+            />
+            <ProtectedRoute
+              exact
+              path="/patients/:_id/:page"
+              // render={props => <SinglePatient {...props} />}
               component={SinglePatient}
             />
-            <Route exact path="/patients/new" component={NewPatient} />
-            <Route path="/table" component={EnhancedTable} />
-            <Route path="/appointments" component={Appointments} />
-          </CssBaseline>
-        </Router>
+            {/* <Route exact path="/patients" component={PatientsList} /> */}
+            <Redirect exact from="/patients/:_id" to="/patients/:_id/general" />
+            {/* a simple hack */}
+            {/* <Redirect
+              exact
+              from="/patients/:id/dental/medical"
+              to="/patients/:id/medical"
+            /> */}
+            {/* <Redirect
+              exact
+              from="/patients/:name/info/dental/general"
+              to="/patients/:name/info/general"
+            />
+            <Redirect
+              exact
+              from="/patients/:name/info/dental/dental"
+              to="/patients/ahmadzaaza/info/dental"
+            /> */}
+
+            <Route exact path="/table" component={EnhancedTable} />
+            <Route exact path="/appointments" component={Appointments} />
+            <Route exact path="/lab" component={Lab} />
+            <Route exact path="/lab/new" component={NewLab} />
+            <Route exact path="/lab/labname" component={SingleLab} />
+            <Route exact path="/vector" component={Vector} />
+            <Route
+              exact
+              path="/patients/ahmadzaaza/sessions/new"
+              component={NewForm}
+            />
+            {/* <Route path="/" render={() => <div>404</div>} /> */}
+            <Route exact path="/unauthorized" component={NotAuthorized} />
+          </Switch>
+        </UserDataContext>
       </MuiPickersUtilsProvider>
     </ThemeProvider>
   );

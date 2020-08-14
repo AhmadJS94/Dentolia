@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     boxShadow: 'none',
-    backgroundColor: '#c93e2c',
+    background: 'linear-gradient(45deg,#07AFAF,#7037D2)',
     minHeight: '100vh',
     fontFamily: 'Quicksand , sans-serif',
   },

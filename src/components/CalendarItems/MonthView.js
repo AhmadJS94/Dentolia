@@ -15,15 +15,26 @@ const useStyles = makeStyles(theme => ({
 
     animation: '$anim 1000ms forwards',
   },
-  daysOfWeek: {
+  daysOfWeekBox: {
     backgroundColor: '#167e56',
     // width: 'auto',
     // height: '15px',
     borderLeft: '1px solid #666',
-    textAlign: 'center',
+    // textAlign: 'center',
     fontFamily: 'Quicksand , sans-serif',
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     color: '#eee',
+    overflowX: 'hidden',
+    overflowY: 'hidden',
+  },
+  daysOfWeek: {
+    fontFamily: 'Quicksand , sans-serif',
+    fontWeight: 'lighter',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    ['@media (max-width:335px)']: {
+      fontSize: '15px',
+    },
   },
   '@keyframes anim': {
     '0%': {
@@ -34,20 +45,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const MonthView = ({
-  generateNextCells,
-  generateCells,
-  generatePrevCells,
-  date,
-  setDate,
-  isWeekView,
-  isMonthView,
-  setWeekView,
-  isDayView,
-  setDayView,
-  setMonthView,
-  generateDays,
-}) => {
+const MonthView = ({ generateNextCells, generateCells, generatePrevCells }) => {
   const classes = useStyles();
 
   const months = [
@@ -76,7 +74,7 @@ const MonthView = ({
 
   return (
     <>
-      <CalendarHeader
+      {/* <CalendarHeader
         isWeekView={isWeekView}
         isMonthView={isMonthView}
         setMonthView={setMonthView}
@@ -85,18 +83,12 @@ const MonthView = ({
         setDayView={setDayView}
         date={date}
         setDate={setDate}
-      />
+      /> */}
       <div className={classes.container}>
         {days.map((day, index) => {
           return (
-            <div className={classes.daysOfWeek} key={index}>
-              <Typography
-                style={{
-                  fontFamily: 'Quicksand , sans-serif',
-                  fontWeight: 'lighter',
-                }}
-                variant="h6"
-              >
+            <div className={classes.daysOfWeekBox} key={index}>
+              <Typography className={classes.daysOfWeek} variant="h6">
                 {day}
               </Typography>
             </div>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width='100vw' height='100vh' viewBox="0 0 1920.796 1291">
+  <defs>
+    <linearGradient id="linear-gradient" y1="0.011" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#3e71ab"/>
+      <stop offset="1" stop-color="#1fa3be"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_2" data-name="Group 2" transform="translate(0 93)">
+    <g id="Rectangle_5" data-name="Rectangle 5" transform="translate(0 -16)" stroke="#707070" stroke-width="1" fill="url(#linear-gradient)">
+      <rect width="1920" height="1080" stroke="none"/>
+      <rect x="0.5" y="0.5" width="1919" height="1079" fill="none"/>
+    </g>
+    <g id="Path_1" data-name="Path 1" transform="translate(1171 -93)" fill="none">
+      <path d="M224,0C347.712,0,448,100.288,448,224S347.712,448,224,448,0,347.712,0,224,100.288,0,224,0Z" stroke="none"/>
+      <path d="M 224 75 C 141.841064453125 75 75 141.841064453125 75 224 C 75 306.158935546875 141.841064453125 373 224 373 C 306.158935546875 373 373 306.158935546875 373 224 C 373 141.841064453125 306.158935546875 75 224 75 M 224 0 C 347.7117309570313 0 448 100.2882690429688 448 224 C 448 347.7117309570313 347.7117309570313 448 224 448 C 100.2882690429688 448 0 347.7117309570313 0 224 C 0 100.2882690429688 100.2882690429688 0 224 0 Z" stroke="none" fill="#7abfd9"/>
+    </g>
+    <circle id="Ellipse_2" data-name="Ellipse 2" cx="103.5" cy="103.5" r="103.5" transform="translate(1292 28)" fill="#fff" opacity="0.32"/>
+    <rect id="Rectangle_1" data-name="Rectangle 1" width="197" height="197" transform="translate(150.2 517.5) rotate(-45)" fill="#fff" opacity="0.44"/>
+    <rect id="Rectangle_2" data-name="Rectangle 2" width="197" height="197" transform="translate(1686 618)" fill="#fff" opacity="0.44"/>
+    <line id="Line_4" data-name="Line 4" x2="390" transform="translate(94.5 517.5)" fill="none" stroke="#f9eeee" stroke-width="1" stroke-dasharray="5"/>
+    <g id="Group_1" data-name="Group 1" transform="translate(0 188)" style="mix-blend-mode: screen;isolation: isolate">
+      <circle id="Ellipse_3" data-name="Ellipse 3" cx="196" cy="196" r="196" transform="translate(1092 618)" fill="#bff8f7" opacity="0.1"/>
+      <path id="Path_2" data-name="Path 2" d="M155.5,0A155.5,155.5,0,1,1,0,155.5,155.5,155.5,0,0,1,155.5,0Z" transform="translate(1133 659)" fill="none" opacity="0.29"/>
+      <circle id="Ellipse_5" data-name="Ellipse 5" cx="65" cy="65" r="65" transform="translate(1223 749)" fill="#fffefe" opacity="0.1"/>
+      <circle id="Ellipse_7" data-name="Ellipse 7" cx="160" cy="160" r="160" transform="translate(1128 654)" fill="#fff" opacity="0.05"/>
+    </g>
+    <line id="Line_5" data-name="Line 5" y1="434" transform="translate(1395.5 -6.5)" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="1 10"/>
+    <rect id="Rectangle_3" data-name="Rectangle 3" width="69" height="69" transform="translate(175.739 863.797) rotate(-43)" fill="#e3e3e3" opacity="0.36"/>
+    <rect id="Rectangle_4" data-name="Rectangle 4" width="69" height="69" transform="matrix(0.934, -0.358, 0.358, 0.934, 1683.928, 483.655)" fill="#e3e3e3" opacity="0.36"/>
+    <line id="Line_6" data-name="Line 6" x1="550" y1="404" transform="translate(1370.5 676.5)" fill="none" stroke="#fbf9f9" stroke-width="1"/>
+    <line id="Line_7" data-name="Line 7" y1="36" x2="26.263" transform="translate(568.5 792.5)" fill="none" stroke="#fcf6f6" stroke-width="1"/>
+    <line id="Line_8" data-name="Line 8" y1="36" x2="26.263" transform="translate(607.5 792.5)" fill="none" stroke="#fcf6f6" stroke-width="1"/>
+    <line id="Line_9" data-name="Line 9" y1="36" x2="26.263" transform="translate(647.5 792.5)" fill="none" stroke="#fcf6f6" stroke-width="1"/>
+    <line id="Line_10" data-name="Line 10" y1="36" x2="26.263" transform="translate(686.5 792.5)" fill="none" stroke="#fcf6f6" stroke-width="1"/>
+    <line id="Line_11" data-name="Line 11" y1="36" x2="26.263" transform="translate(725.5 792.5)" fill="none" stroke="#fcf6f6" stroke-width="1"/>
+  </g>
+</svg>

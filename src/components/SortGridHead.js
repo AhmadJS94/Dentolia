@@ -8,8 +8,34 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Typography, TableSortLabel } from '@material-ui/core';
 
+const useStyles = makeStyles(theme => ({
+  tableCell: {
+    paddingLeft: '3px',
+    paddingRight: '3px',
+    // ['@media (max-width:450px)']: {
+    //   padding: '0.5em',
+    // },
+    // ['@media (max-width:400px)']: {
+    //   padding: '0.2em',
+    // },
+  },
+  headLabel: {
+    fontWeight: 'bold',
+    marginLeft: '25px',
+    ['@media (max-width:420px)']: {
+      marginLeft: '0',
+    },
+  },
+  label: {
+    display: 'flex',
+    justifyContent: 'center',
+    ['@media (max-width:420px)']: {
+      flexWrap: 'wrap',
+    },
+  },
+}));
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Full Name' },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Full Name' },
   { id: 'age', numeric: true, disablePadding: false, label: 'Age' },
   {
     id: 'phone',
@@ -21,6 +47,7 @@ const headCells = [
 ];
 
 export default function EnhancedTableHead(props) {
+  const headClasses = useStyles();
   const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
@@ -29,20 +56,23 @@ export default function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell size="small" padding="checkbox"></TableCell>
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align="left"
+            align="center"
             padding={headCell.disablePadding ? 'none' : 'default'}
             sortDirection={orderBy === headCell.id ? order : false}
+            className={headClasses.tableCell}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
+              className={headClasses.label}
             >
-              {headCell.label}
+              <Typography className={headClasses.headLabel} variant="subtitle1">
+                {headCell.label}
+              </Typography>
               {orderBy === headCell.id ? (
                 <span className={classes}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -55,12 +85,3 @@ export default function EnhancedTableHead(props) {
     </TableHead>
   );
 }
-
-// EnhancedTableHead.propTypes = {
-//   classes: PropTypes.object.isRequired,
-
-//   onRequestSort: PropTypes.func.isRequired,
-
-//   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-//   orderBy: PropTypes.string.isRequired,
-// };

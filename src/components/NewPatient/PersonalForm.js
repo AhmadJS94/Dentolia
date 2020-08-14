@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+
 import {
   TextField,
   Button,
@@ -10,77 +11,119 @@ import {
   FormControlLabel,
   Radio,
   FormLabel,
+  InputLabel,
 } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    boxShadow: 'none',
-    backgroundColor: '#3a5ad9',
-    minHeight: '100vh',
+  container: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3,minmax(225px,1fr))',
+    ['@media(max-width:900px)']: {
+      gridTemplateColumns: 'repeat(auto-fit,minmax(175px,1fr))',
+    },
   },
-
   text: {
     margin: '16px 8px',
   },
   radio: {
-    width: '70px',
-    display: 'inline-block',
-    margin: '16px 16px',
+    display: 'flex',
+
+    // justifyContent: 'space-around',
+    alignItems: 'center',
+    flexDirection: 'row',
+    // margin: '16px 16px',
+  },
+  inputLabel: {
+    color: '#888',
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(1),
   },
 }));
-export default function PersonalForm({ handlePersonalChange, personalInfo }) {
+export default function PersonalForm({
+  handlePersonalChange,
+  personalInfo,
+  validateData,
+  errors,
+}) {
   const classes = useStyles();
 
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item xs={6} sm={4}>
+      <div className={classes.container}>
+        <div style={{ textAlign: 'center' }}>
+          <InputLabel className={classes.inputLabel}>First Name</InputLabel>
           <TextField
             className={classes.text}
             onChange={handlePersonalChange}
             value={personalInfo.firstName}
             variant="outlined"
-            label="First name"
             name="firstName"
             size="small"
+            error={Boolean(errors.firstName)}
+            helperText={Boolean(errors.firstName) && errors.firstName}
+            onBlur={() => validateData('firstName')}
           />
-        </Grid>
-        <Grid item xs={6} sm={4}>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <InputLabel className={classes.inputLabel}>Last Name</InputLabel>
           <TextField
             className={classes.text}
             onChange={handlePersonalChange}
             value={personalInfo.lastName}
             variant="outlined"
-            label="Last name"
             name="lastName"
             size="small"
+            onBlur={() => validateData('lastName')}
+            error={Boolean(errors.lastName)}
+            helperText={Boolean(errors.lastName) && errors.lastName}
           />
-        </Grid>
-        <Grid item xs={6} sm={4}>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <InputLabel className={classes.inputLabel}>Address</InputLabel>
           <TextField
             className={classes.text}
             onChange={handlePersonalChange}
             value={personalInfo.address}
             variant="outlined"
-            label="Address"
             name="address"
             size="small"
+            onBlur={() => validateData('address')}
+            error={Boolean(errors.address)}
+            helperText={Boolean(errors.address) && errors.address}
           />
-        </Grid>
-        <Grid item xs={6} sm={4}>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <InputLabel className={classes.inputLabel}>Phone Number</InputLabel>
           <TextField
             className={classes.text}
             onChange={handlePersonalChange}
             value={personalInfo.phoneNumber}
             variant="outlined"
-            label="Phone Number"
             name="phoneNumber"
             size="small"
+            onBlur={() => validateData('phoneNumber')}
+            error={Boolean(errors.phoneNumber)}
+            helperText={Boolean(errors.phoneNumber) && errors.phoneNumber}
           />
-        </Grid>
-        <Grid item xs={6} sm={4}>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <InputLabel className={classes.inputLabel}>Occupation</InputLabel>
           <TextField
+            className={classes.text}
+            onChange={handlePersonalChange}
+            value={personalInfo.occupation}
+            variant="outlined"
+            name="occupation"
             size="small"
+            onBlur={() => validateData('occupation')}
+            error={Boolean(errors.occupation)}
+            helperText={Boolean(errors.occupation) && errors.occupation}
+          />
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          {/* <TextField
+            size="small"
+            variant="outlined"
             className={classes.text}
             id="date"
             label="Birthday"
@@ -91,9 +134,27 @@ export default function PersonalForm({ handlePersonalChange, personalInfo }) {
             }}
             onChange={handlePersonalChange}
             name="dateOfBirth"
+          /> */}
+          <InputLabel className={classes.inputLabel}>Age</InputLabel>
+          <TextField
+            size="small"
+            variant="outlined"
+            className={classes.text}
+            value={personalInfo.age}
+            onChange={handlePersonalChange}
+            name="age"
+            onBlur={() => validateData('age')}
+            error={Boolean(errors.age)}
+            helperText={Boolean(errors.age) && errors.age}
           />
-        </Grid>
-        <Grid item xs={6} sm={4}>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+          }}
+        >
           <RadioGroup
             size="small"
             className={classes.radio}
@@ -102,20 +163,35 @@ export default function PersonalForm({ handlePersonalChange, personalInfo }) {
             value={personalInfo.gender}
             onChange={handlePersonalChange}
           >
-            <FormLabel component="legend">Gender</FormLabel>
-            <FormControlLabel
-              value="female"
-              control={<Radio size="small" />}
-              label="Female"
-            />
-            <FormControlLabel
-              value="male"
-              control={<Radio size="small" />}
-              label="Male"
-            />
+            <FormLabel
+              style={{ color: '#555', marginRight: '10px' }}
+              component="h6"
+            >
+              Gender
+            </FormLabel>
+
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                // justifyContent: 'center',
+              }}
+            >
+              <FormControlLabel
+                value="female"
+                control={<Radio size="small" />}
+                label="Female"
+              />
+              <FormControlLabel
+                value="male"
+                control={<Radio size="small" />}
+                label="Male"
+              />
+            </div>
           </RadioGroup>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </>
   );
 }

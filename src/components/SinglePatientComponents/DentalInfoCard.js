@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Route, Redirect } from 'react-router-dom';
 import {
   List,
   ListItemIcon,
@@ -12,43 +13,70 @@ import {
   Typography,
   Button,
   Divider,
+  TextField,
+  InputBase,
+  Input,
+  Tab,
+  Tabs,
+  AppBar,
+  Container,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import Vector from '../../pages/Vector';
+import Treatments from './Treatments';
+import DentalInfo from './DentalInfo/DentalInfo';
 
-export default function DentalInfoCard() {
+// function TabPanel(props) {
+//   const { children, value, index, ...other } = props;
+
+//   return (
+//     <div
+//       role="tabpanel"
+//       hidden={value !== index}
+//       id={`simple-tabpanel-${index}`}
+//       {...other}
+//     >
+//       {value === index && <>{children}</>}
+//     </div>
+//   );
+// }
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    height: 224,
+  },
+}));
+export default function DentalInfoCard({ page, history }) {
+  const indexToRoute = {
+    0: 'chart',
+    1: 'treatments',
+    // 2: 'dental',
+  };
+  const routeToIndex = {
+    dental: 0,
+    treatments: 1,
+    // dental: 2,
+  };
+  const classes = useStyles();
+  const [selectedValue, setSelectedValue] = useState(routeToIndex[page]);
+  const handleChange = (event, newValue) => {
+    history.push(indexToRoute[newValue]);
+    setSelectedValue(newValue);
+  };
   return (
-    <Grid item xs="12" sm="3">
-      <Paper>
-        <Typography align="center" variant="h6">
-          Dental Info
-        </Typography>
-        <Divider />
-        <List dense="true">
-          <ListItem dense={true}>
-            <ListItemText primary="Age" secondary="27"></ListItemText>
-          </ListItem>
-          <ListItem dense={true}>
-            <ListItemText primary="Gender" secondary="Male"></ListItemText>
-          </ListItem>
-          <ListItem dense={true}>
-            <ListItemText
-              primary="Last visit"
-              secondary="27/8/2019"
-            ></ListItemText>
-          </ListItem>
-          <ListItem dense={true}>
-            <ListItemText
-              primary="first visit"
-              secondary="21/10/2018"
-            ></ListItemText>
-            <ListItemSecondaryAction>
-              <IconButton size="small">
-                <EditIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        </List>
-      </Paper>
-    </Grid>
+    <>
+      <AppBar position="static" color="default">
+        <Tabs variant="fullWidth" value={selectedValue} onChange={handleChange}>
+          <Tab label="Dental Chart" />
+          <Tab label="Treatments" />
+          <Tab label="Dental Info" />
+          <Tab label="Images" />
+        </Tabs>
+        {selectedValue === 0 && <DentalInfo />}
+        {selectedValue === 1 && <Treatments />}
+      </AppBar>
+    </>
   );
 }

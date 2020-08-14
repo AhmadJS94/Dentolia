@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 //CONSIDER ADDING BLOODTYPE
 import {
@@ -46,6 +46,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontWeight: 'bold',
+    transition: 'all 0.2s ease',
   },
   inputContainer: {
     display: 'flex',
@@ -53,15 +54,11 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '1em',
   },
 }));
-export default function MedicalRecordCard() {
-  const [medicalInfo, setMedicalInfo] = useState({
-    medications: [],
-    allergies: [],
-    medicalConditions: [],
-    specialNotes: '',
-    pastSurgeries: [],
-    bloodType: 'Not defined',
-  });
+export default function MedicalRecordCard({
+  medicalInfo,
+  setMedicalInfo,
+  updateData,
+}) {
   const bloodTypes = [
     'Not defined',
     'A+',
@@ -138,7 +135,12 @@ export default function MedicalRecordCard() {
   return (
     <Grid component={Paper} className={classes.container} container>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Medications
         </Typography>
         {medicalInfo.medications.length === 0 ? (
@@ -163,12 +165,14 @@ export default function MedicalRecordCard() {
                 name="medications"
                 onChange={e => handleChange(e, i)}
               />
-              <IconButton type="submit" size="small">
-                <HighlightOffRoundedIcon
-                  style={{ fill: '#ba1e4a' }}
-                  size="small"
-                />
-              </IconButton>
+              {edit && (
+                <IconButton type="submit" size="small">
+                  <HighlightOffRoundedIcon
+                    style={{ fill: '#ba1e4a' }}
+                    size="small"
+                  />
+                </IconButton>
+              )}
             </form>
           ))
         )}
@@ -198,7 +202,12 @@ export default function MedicalRecordCard() {
         )}
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Allergies
         </Typography>
         {medicalInfo.allergies.length === 0 ? (
@@ -223,12 +232,14 @@ export default function MedicalRecordCard() {
                 name="allergies"
                 onChange={e => handleChange(e, i)}
               />
-              <IconButton type="submit" size="small">
-                <HighlightOffRoundedIcon
-                  style={{ fill: '#ba1e4a' }}
-                  size="small"
-                />
-              </IconButton>
+              {edit && (
+                <IconButton type="submit" size="small">
+                  <HighlightOffRoundedIcon
+                    style={{ fill: '#ba1e4a' }}
+                    size="small"
+                  />
+                </IconButton>
+              )}
             </form>
           ))
         )}
@@ -257,7 +268,12 @@ export default function MedicalRecordCard() {
         )}
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Medical Conditions
         </Typography>
 
@@ -283,12 +299,14 @@ export default function MedicalRecordCard() {
                 name="medicalConditions"
                 onChange={e => handleChange(e, i)}
               />
-              <IconButton type="submit" size="small">
-                <HighlightOffRoundedIcon
-                  style={{ fill: '#ba1e4a' }}
-                  size="small"
-                />
-              </IconButton>
+              {edit && (
+                <IconButton type="submit" size="small">
+                  <HighlightOffRoundedIcon
+                    style={{ fill: '#ba1e4a' }}
+                    size="small"
+                  />
+                </IconButton>
+              )}
             </form>
           ))
         )}
@@ -317,7 +335,12 @@ export default function MedicalRecordCard() {
         )}
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Past Surgeries
         </Typography>
 
@@ -343,12 +366,14 @@ export default function MedicalRecordCard() {
                 name="pastSurgeries"
                 onChange={e => handleChange(e, i)}
               />
-              <IconButton type="submit" size="small">
-                <HighlightOffRoundedIcon
-                  style={{ fill: '#ba1e4a' }}
-                  size="small"
-                />
-              </IconButton>
+              {edit && (
+                <IconButton type="submit" size="small">
+                  <HighlightOffRoundedIcon
+                    style={{ fill: '#ba1e4a' }}
+                    size="small"
+                  />
+                </IconButton>
+              )}
             </form>
           ))
         )}
@@ -377,7 +402,6 @@ export default function MedicalRecordCard() {
           </form>
         )}
       </Grid>
-
       <Grid
         xs={12}
         sm={6}
@@ -385,7 +409,12 @@ export default function MedicalRecordCard() {
         className={classes.gridItem}
         style={{ alignItems: 'center' }}
       >
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Blood Type
         </Typography>
         <Select
@@ -402,7 +431,12 @@ export default function MedicalRecordCard() {
         </Select>
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Special Notes
         </Typography>
 
@@ -439,7 +473,11 @@ export default function MedicalRecordCard() {
             Edit
           </Button>
           {edit && (
-            <Button style={{ marginLeft: '5px' }} variant="contained">
+            <Button
+              onClick={() => updateData('medicalInfo')}
+              style={{ marginLeft: '5px' }}
+              variant="contained"
+            >
               Save Changes
             </Button>
           )}

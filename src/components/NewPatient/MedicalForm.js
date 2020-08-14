@@ -26,8 +26,8 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2),
   },
   radio: {
-    width: '70px',
-    display: 'inline-block',
+    // width: '70px',
+    // display: 'inline-block',
     margin: '16px 16px',
   },
 }));
@@ -36,9 +36,20 @@ export default function MedicalForm({ handleMedicalChange, medicalInfo }) {
 
   return (
     <>
-      <Grid container spacing={0}>
-        <Grid item xs={4} sm={6} md={6} lg={4}>
-          <FormLabel component="legend">Allergies</FormLabel>
+      <Grid container={true} spacing={0}>
+        <Grid
+          container
+          justify="center"
+          alignItems="center"
+          item
+          xs={6}
+          sm={6}
+          md={6}
+          lg={4}
+        >
+          <FormLabel style={{ color: '#555' }} component="legend">
+            Allergies
+          </FormLabel>
 
           <RadioGroup
             size="small"
@@ -60,8 +71,19 @@ export default function MedicalForm({ handleMedicalChange, medicalInfo }) {
             />
           </RadioGroup>
         </Grid>
-        <Grid item xs={4} sm={6} md={6} lg={4}>
-          <FormLabel component="legend">Surgeries</FormLabel>
+        <Grid
+          container
+          justify="center"
+          alignItems="center"
+          item
+          xs={6}
+          sm={6}
+          md={6}
+          lg={4}
+        >
+          <FormLabel style={{ color: '#555' }} component="legend">
+            Surgeries
+          </FormLabel>
 
           <RadioGroup
             size="small"
@@ -84,8 +106,18 @@ export default function MedicalForm({ handleMedicalChange, medicalInfo }) {
           </RadioGroup>
         </Grid>
 
-        <Grid item xs={4} sm={12} lg={4}>
-          <FormLabel component="legend">Medical Conditions</FormLabel>
+        <Grid
+          container
+          justify="center"
+          alignItems="center"
+          item
+          xs={12}
+          sm={12}
+          lg={4}
+        >
+          <FormLabel style={{ color: '#555' }} component="legend">
+            Medical Conditions
+          </FormLabel>
           <RadioGroup
             size="small"
             className={classes.radio}

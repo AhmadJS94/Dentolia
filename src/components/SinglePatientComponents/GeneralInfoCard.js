@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   List,
@@ -15,6 +15,7 @@ import {
   TextField,
   InputBase,
   Input,
+  CircularProgress,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
@@ -33,6 +34,7 @@ const useStyles = makeStyles(theme => ({
   },
   Input: {
     border: '1px solid rgba(221, 216, 216, 0.7)',
+    marginBottom: '0.5em',
     outline: '0',
     borderRadius: '7px',
     transition: 'all 0.2s ease',
@@ -46,20 +48,18 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     fontWeight: 'bold',
+    transition: 'all 0.2s ease',
   },
 }));
-export default function GeneralInfoCard() {
-  const [generalInfo, setGeneralInfo] = useState({
-    fullName: 'Ahmad Zaaza',
-    age: '27',
-    address: 'Damascus',
-    gender: 'Male',
-    firstVisit: '27/2/2019',
-  });
+export default function GeneralInfoCard({
+  personalInfo,
+  setPersonalInfo,
+  updateData,
+}) {
   const [edit, setEdit] = useState(false);
   const handleChange = e => {
-    setGeneralInfo({
-      ...generalInfo,
+    setPersonalInfo({
+      ...personalInfo,
       [e.target.name]: e.target.value,
     });
   };
@@ -67,25 +67,55 @@ export default function GeneralInfoCard() {
     e.preventDefault();
     setEdit(!edit);
   };
+
   const classes = useStyles();
   return (
     <Grid component={Paper} className={classes.container} container>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
-          Full Name
+        <Typography
+          className={classes.title}
+          style={{ marginBottom: edit && '0.5em' }}
+          align="center"
+          variant="h5"
+        >
+          First Name
         </Typography>
 
         <InputBase
           className={edit ? classes.Input : ''}
           inputProps={{ style: { textAlign: 'center' } }}
           readOnly={edit ? false : true}
-          value={generalInfo.fullName}
-          name="fullName"
+          value={personalInfo.firstName}
+          name="firstName"
           onChange={handleChange}
         />
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          className={classes.title}
+          style={{ marginBottom: edit && '0.5em' }}
+          align="center"
+          variant="h5"
+        >
+          Last Name
+        </Typography>
+
+        <InputBase
+          className={edit ? classes.Input : ''}
+          inputProps={{ style: { textAlign: 'center' } }}
+          readOnly={edit ? false : true}
+          value={personalInfo.lastName}
+          name="lastName"
+          onChange={handleChange}
+        />
+      </Grid>
+      <Grid xs={12} sm={6} item className={classes.gridItem}>
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Age
         </Typography>
 
@@ -93,13 +123,18 @@ export default function GeneralInfoCard() {
           className={edit ? classes.Input : ''}
           inputProps={{ style: { textAlign: 'center' } }}
           readOnly={edit ? false : true}
-          value={generalInfo.age}
+          value={personalInfo.age}
           name="age"
           onChange={handleChange}
         />
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Gender
         </Typography>
 
@@ -107,13 +142,18 @@ export default function GeneralInfoCard() {
           className={edit ? classes.Input : ''}
           inputProps={{ style: { textAlign: 'center' } }}
           readOnly={edit ? false : true}
-          value={generalInfo.gender}
+          value={personalInfo.gender}
           name="gender"
           onChange={handleChange}
         />
       </Grid>
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
           Address
         </Typography>
 
@@ -121,22 +161,46 @@ export default function GeneralInfoCard() {
           className={edit ? classes.Input : ''}
           inputProps={{ style: { textAlign: 'center' } }}
           readOnly={edit ? false : true}
-          value={generalInfo.address}
+          value={personalInfo.address}
           name="address"
           onChange={handleChange}
         />
       </Grid>
+      {/* <Grid xs={12} sm={6} item className={classes.gridItem}>
+            <Typography
+              style={{ marginBottom: edit && '0.5em' }}
+              className={classes.title}
+              align="center"
+              variant="h5"
+            >
+              First visit
+            </Typography>
+
+            <InputBase
+              className={edit ? classes.Input : ''}
+              inputProps={{ style: { textAlign: 'center' } }}
+              readOnly={edit ? false : true}
+              value={personalInfo.firstVisit}
+              name="firstVisit"
+              onChange={handleChange}
+            />
+          </Grid> */}
       <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography className={classes.title} align="center" variant="h5">
-          First visit
+        <Typography
+          style={{ marginBottom: edit && '0.5em' }}
+          className={classes.title}
+          align="center"
+          variant="h5"
+        >
+          Phone Number
         </Typography>
 
         <InputBase
           className={edit ? classes.Input : ''}
           inputProps={{ style: { textAlign: 'center' } }}
           readOnly={edit ? false : true}
-          value={generalInfo.firstVisit}
-          name="firstVisit"
+          value={personalInfo.phoneNumber}
+          name="phoneNumber"
           onChange={handleChange}
         />
       </Grid>
@@ -150,7 +214,11 @@ export default function GeneralInfoCard() {
             Edit
           </Button>
           {edit && (
-            <Button style={{ marginLeft: '5px' }} variant="contained">
+            <Button
+              onClick={() => updateData('personalInfo')}
+              style={{ marginLeft: '5px' }}
+              variant="contained"
+            >
               Save Changes
             </Button>
           )}

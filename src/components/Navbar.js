@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-computed-key */
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -9,6 +10,7 @@ import {
   MenuIcon,
   Menu,
   MenuItem,
+  useMediaQuery,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Link } from 'react-router-dom';
@@ -18,9 +20,13 @@ const useStyles = makeStyles(theme => ({
     background: 'inherit',
     boxShadow: 'none',
   },
-  toolbar: { minHeight: '64px' },
+  toolbar: {
+    minHeight: '64px',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   title: {
-    flexGrow: 1,
+    // flexGrow: 1,
   },
   link: {
     textDecoration: 'none',
@@ -72,12 +78,6 @@ export default function Navbar() {
     <div>
       <AppBar className={classes.root} position="static">
         <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" className={classes.title}>
-            <Link className={classes.link} to="/">
-              DontoHub
-            </Link>
-          </Typography>
-
           <Button
             component={Link}
             className={`${classes.link} ${classes.loginHidden}`}
@@ -85,78 +85,92 @@ export default function Navbar() {
           >
             Login
           </Button>
-          <Button
-            component={Link}
-            className={`${classes.link} ${classes.signupHidden}`}
-            to="/signup"
-          >
-            Signup
-          </Button>
-
-          <IconButton className={classes.menu} onClick={handleClick}>
-            <MoreVertIcon size="small" />
-          </IconButton>
-          <Menu
-            variant="selectedMenu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem
+          <Typography variant="h6" className={classes.title}>
+            <Link className={classes.link} to="/">
+              Dentolia
+            </Link>
+          </Typography>
+          <div>
+            <Button
               component={Link}
+              className={`${classes.link} ${classes.loginHidden}`}
               to="/login"
-              className={classes.loginHiddenMenu}
-              onClick={handleClose}
             >
-              <Link className={`${classes.link}`} color="inherit">
-                Login
-              </Link>
-            </MenuItem>
-            <MenuItem
+              Login
+            </Button>
+            <Button
               component={Link}
+              className={`${classes.link} ${classes.signupHidden}`}
               to="/signup"
-              className={classes.signupHiddenMenu}
-              onClick={handleClose}
             >
-              <Link className={`${classes.link}`} color="inherit">
-                Signup
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link className={classes.link} component={Link} color="inherit">
-                FAQ
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link className={classes.link} component={Link} color="inherit">
-                Pricing
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link className={classes.link} component={Link} color="inherit">
-                About us
-              </Link>
-            </MenuItem>
-          </Menu>
-          <Button
-            component={Link}
-            className={`${classes.hidden} ${classes.link}`}
-          >
-            FAQ
-          </Button>
-          <Button
-            component={Link}
-            className={`${classes.hidden} ${classes.link}`}
-          >
-            Pricing
-          </Button>
-          <Button
-            component={Link}
-            className={`${classes.hidden} ${classes.link}`}
-          >
-            About us
-          </Button>
+              Signup
+            </Button>
+
+            <IconButton className={classes.menu} onClick={handleClick}>
+              <MoreVertIcon size="small" />
+            </IconButton>
+            <Menu
+              variant="selectedMenu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem
+                component={Link}
+                to="/login"
+                className={classes.loginHiddenMenu}
+                onClick={handleClose}
+              >
+                <Link className={`${classes.link}`} color="inherit">
+                  Login
+                </Link>
+              </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/signup"
+                className={classes.signupHiddenMenu}
+                onClick={handleClose}
+              >
+                <Link className={`${classes.link}`} color="inherit">
+                  Signup
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link className={classes.link} component={Link} color="inherit">
+                  FAQ
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link className={classes.link} component={Link} color="inherit">
+                  Pricing
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link className={classes.link} component={Link} color="inherit">
+                  About us
+                </Link>
+              </MenuItem>
+            </Menu>
+            <Button
+              component={Link}
+              className={`${classes.hidden} ${classes.link}`}
+            >
+              FAQ
+            </Button>
+            <Button
+              component={Link}
+              className={`${classes.hidden} ${classes.link}`}
+            >
+              Pricing
+            </Button>
+            <Button
+              component={Link}
+              className={`${classes.hidden} ${classes.link}`}
+            >
+              About us
+            </Button>
+          </div>
         </Toolbar>
       </AppBar>
     </div>

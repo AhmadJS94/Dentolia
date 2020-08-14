@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardContent, Typography } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   container: {
+    // marginTop: '2em',
     marginBottom: '2em',
   },
   cardContainer: {
@@ -64,11 +65,10 @@ export default function WhyDontoHub() {
         <Card className={classes.card}>
           <CardContent className={classes.cardContent}>
             <Typography className={classes.cardTitle} variant="h6">
-              Smart Software
+              Easy to Use
             </Typography>
             <Typography style={{ textAlign: 'center' }} variant="subtitle1">
-              lorem Ipsum sit amet bla bla bla ? ok deal lorem Ipsum sit amet
-              bla bla bla ? ok deal lorem Ipsu
+              Dentolia is user friendly designed
             </Typography>
           </CardContent>
         </Card>

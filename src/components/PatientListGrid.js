@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable no-useless-computed-key */
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
@@ -12,38 +13,55 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import { Grid, Button, TextField, InputAdornment } from '@material-ui/core';
+import axios from 'axios';
+import { DateTimePicker } from '@material-ui/pickers';
+import moment from 'moment';
+import {
+  Grid,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Select,
+  MenuItem,
+  FormHelperText,
+  Chip,
+  CircularProgress,
+  FormControl,
+  Snackbar,
+} from '@material-ui/core';
 import photo from '../images/photo.jpg';
 import { Link } from 'react-router-dom';
 import SortGridHead from './SortGridHead';
 import AddIcon from '@material-ui/icons/Add';
 import SearchIcon from '@material-ui/icons/Search';
+import CheckIcon from '@material-ui/icons/Check';
 import { Link as RouterLink } from 'react-router-dom';
-
-function createData(name, age, phone, visits) {
-  return { name, age, phone, visits };
+import { UserData } from '../Contexts/UserDataContext';
+import Skeleton from '@material-ui/lab/Skeleton';
+import Alert from '@material-ui/lab/Alert';
+let config = {
+  headers: {
+    authorization: `Bearer ${localStorage.token}`,
+  },
+};
+function createData(_id, name, age, phone, visits) {
+  return { _id, name, age, phone, visits };
 }
-const data = [
-  createData('zzaaza', 28, 12878921, 8),
-  createData('bitch', 26, 873875423, 4),
-  createData('Bla', 20, 873875423, 5),
-  createData('Souhier', 20, 873875423, 5),
-  createData('Bashar', 20, 873875423, 5),
-  createData('Roukia', 20, 873875423, 5),
-  createData('Hi', 20, 873875423, 5),
-  createData('Lolo', 20, 873875423, 5),
-];
+
 const useRowStyles = makeStyles(theme => ({
   root: {
     '& > *': {
       borderBottom: 'unset',
+      cursor: 'pointer',
     },
   },
   box: {
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     flexDirection: 'row',
   },
   grid: {
@@ -54,6 +72,16 @@ const useRowStyles = makeStyles(theme => ({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
+  },
+  tableCell: {
+    paddingLeft: '3px',
+    paddingRight: '3px',
+    // ['@media (max-width:450px)']: {
+    //   padding: '0.5em',
+    // },
+    // ['@media (max-width:400px)']: {
+    //   padding: '0.2em',
+    // },
   },
   visuallyHidden: {
     border: 0,
@@ -69,35 +97,262 @@ const useRowStyles = makeStyles(theme => ({
   header: {
     background: 'rgba(228, 224, 246, 0.87)',
     display: 'flex',
-    justifyContent: 'space-around',
-    padding: '20px',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px',
     borderRadius: '0px',
   },
   headingTitle: {
-    fontFamily: 'Raleway',
+    fontFamily: 'Quicksand',
     fontWeight: '300',
   },
+  addButton: {
+    minWidth: '32px',
+  },
+  addHidden: {
+    ['@media (max-width:360px)']: {
+      display: 'none',
+    },
+  },
+  searchContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchField: {
+    width: '150px',
+
+    ['@media (max-width:520px)']: {
+      display: 'none',
+    },
+  },
+  responsiveSearchBar: { width: '150px' },
+  dialogContent: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
 }));
-
+let data = [];
 function Row(props) {
+  const [appointmentDialogOpen, setAppointmentDialogOpen] = useState(false);
+  const [appointment, setAppointment] = useState('');
+  const openAppointmentDialog = () => {
+    setAppointmentDialogOpen(true);
+  };
+  const closeAppointmentDialog = () => {
+    setAppointmentDialogOpen(false);
+    setAppointmentError('');
+    setAppointmentSet(false);
+    setAppDuration('');
+  };
   const { row } = props;
-
+  // const userData = useContext(UserData);
+  const [selectedDate, setSelectedDate] = useState(moment());
+  // const [selectedDay,setSelectedDay ] = useState(new Date());
   const [open, setOpen] = useState(false);
-
+  // const [isLoading, setLoading] = useState(false);
+  const [appDuration, setAppDuration] = useState('');
+  const [durationEmpty, setDurationEmpty] = useState(false);
+  const [appointmentError, setAppointmentError] = useState('');
+  const [appointmentSet, setAppointmentSet] = useState(false);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
   const classes = useRowStyles();
+  const toggleSnackBar = () => {
+    setSnackBarOpen(!snackBarOpen);
+  };
+  const checkAppointmentAvailability = () => {
+    let day = selectedDate.clone().format('ddd');
+    let date = selectedDate.clone().format('DD-MM-yyyy');
+    let hour = selectedDate.clone().format('HH:mm');
+    const appointment = {
+      day,
+      date,
+      hour: `${hour}`,
+      duration: appDuration,
+    };
+    axios
+      .post('http://localhost:5000/appointments/check', appointment, config)
+      .then(res => {
+        console.log(res);
+        console.log(`i rechedked`);
+        if (res.data.message === 'All set') {
+          console.log(res.data);
+          setAppointmentError('');
+          setAppointmentSet(true);
+        } else if (res.data.message.includes('Error')) {
+          console.log(res.data);
+          console.log(`error`);
+          const { conflictedAppointments } = res.data;
+          const { name, hour } = conflictedAppointments[0];
+          setAppointmentError(`Conflicts with ${name} at ${hour}`);
+          setAppointmentSet(false);
+        }
+      })
+      .catch(err => console.log(err.response));
+  };
+  const handleDurationChange = e => {
+    console.log(e.target.value);
+    console.log(appDuration, 'its duration');
+    if (e.target.value === '') {
+      setDurationEmpty(true);
+      setAppDuration(e.target.value);
+    } else {
+      setDurationEmpty(false);
+      setAppDuration(e.target.value);
+    }
+  };
+  const handleDateChange = date => {
+    console.log(date);
+    setSelectedDate(date);
+  };
+  const submitAppointment = () => {
+    if (durationEmpty) {
+      return;
+    }
+    if (!appointmentSet) {
+      return;
+    }
+    let day = selectedDate.clone().format('ddd');
+    let date = selectedDate.clone().format('DD-MM-yyyy');
+    let hour = selectedDate.clone().format('HH:mm');
 
+    const appointment = {
+      day,
+      date,
+      hour: `${hour}`,
+      duration: appDuration,
+    };
+    console.log(appointment);
+    console.log(selectedDate);
+    axios
+      .post(
+        `http://localhost:5000/api/patients/${row._id}/appointments`,
+
+        appointment,
+
+        config
+      )
+      .then(res => {
+        if (res.data.message.includes('successfully')) {
+          closeAppointmentDialog();
+          toggleSnackBar();
+        }
+      })
+      .catch(err => setAppointmentError(`Something went Wrong`));
+  };
+  useEffect(() => {
+    if (appDuration !== '') {
+      console.log(`i am rechecking`);
+      checkAppointmentAvailability();
+    }
+  }, [selectedDate, appDuration]);
   return (
     <>
-      <TableRow tabIndex={-1} hover className={classes.root}>
-        <TableCell size="small">
-          <IconButton size="medium" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
+      <Snackbar
+        open={snackBarOpen}
+        autoHideDuration={4500}
+        onClose={toggleSnackBar}
+      >
+        <Alert onClose={toggleSnackBar} severity="success">
+          {`Appointment Created for ${
+            row.name
+          } on ${selectedDate
+            .clone()
+            .format('DD-MM-yyyy')} at ${selectedDate.clone().format('HH:mm')}`}
+        </Alert>
+      </Snackbar>
+      <Dialog
+        maxWidth={'lg'}
+        onClose={closeAppointmentDialog}
+        open={appointmentDialogOpen}
+        style={{ width: '500' }}
+      >
+        <DialogTitle style={{ textAlign: 'center', fontSize: '2em' }}>
+          Set a new Appointment for {row.name}
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent} dividers={true}>
+          <div>
+            <DialogContentText style={{ fontSize: '1.2em' }}>
+              Select the Date
+            </DialogContentText>
+            <DateTimePicker
+              value={selectedDate}
+              disablePast
+              onChange={handleDateChange}
+              showTodayButton
+              minutesStep={5}
+              ampm={false}
+            />
+          </div>
+          <div>
+            <DialogContentText style={{ fontSize: '1.2em' }}>
+              Set the duration
+            </DialogContentText>
+            <FormControl>
+              <Select
+                error={durationEmpty}
+                value={appDuration}
+                onChange={handleDurationChange}
+              >
+                <MenuItem value="">None</MenuItem>
+                <MenuItem value={15}>15 Minutes</MenuItem>
+                <MenuItem value={30}>30 Minutes</MenuItem>
+                <MenuItem value={45}>45 Minutes</MenuItem>
+                <MenuItem value={60}>1 Hour</MenuItem>
+                <MenuItem value={75}>1 Hour, 15 minutes</MenuItem>
+                <MenuItem value={90}>1 Hour, 30 minutes</MenuItem>
+              </Select>
+            </FormControl>
+            {durationEmpty && (
+              <FormHelperText style={{ color: 'red' }}>
+                Cannot be Empty
+              </FormHelperText>
+            )}
+          </div>
+        </DialogContent>
+        <DialogActions style={{ flexWrap: 'wrap' }}>
+          {appointmentError && (
+            <Chip
+              label={appointmentError}
+              variant="outlined"
+              color="secondary"
+            />
+          )}
+          {appointmentSet && !durationEmpty && (
+            <Chip
+              label="Appointment Available"
+              variant="outlined"
+              color="primary"
+            />
+          )}
+          <Button
+            disabled={appointmentSet && appDuration !== '' ? false : true}
+            onClick={submitAppointment}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <TableRow
+        onClick={() => setOpen(!open)}
+        tabIndex={-1}
+        hover
+        className={classes.root}
+      >
+        <TableCell className={classes.tableCell} align="center">
+          <Typography variant="subtitle1">{`${row.name}`}</Typography>
         </TableCell>
-        <TableCell>{row.name}</TableCell>
-        <TableCell>{row.age}</TableCell>
-        <TableCell>{row.phone}</TableCell>
-        <TableCell>{row.visits}</TableCell>
+        <TableCell className={classes.tableCell} align="center">
+          <Typography variant="subtitle1">{row.age}</Typography>
+        </TableCell>
+        <TableCell className={classes.tableCell} align="center">
+          <Typography variant="subtitle1">{row.phone}</Typography>
+        </TableCell>
+        <TableCell className={classes.tableCell} align="center">
+          <Typography variant="subtitle1">8</Typography>
+        </TableCell>
       </TableRow>
 
       <TableRow>
@@ -134,7 +389,7 @@ function Row(props) {
                       size="small"
                       variant="contained"
                       component={Link}
-                      to="/patients/ahmadzaaza"
+                      to={`/patients/${row._id}`}
                     >
                       Go to Profile
                     </Button>
@@ -143,6 +398,7 @@ function Row(props) {
                       size="small"
                       color="secondary"
                       variant="contained"
+                      onClick={openAppointmentDialog}
                     >
                       Set appointment
                     </Button>
@@ -156,7 +412,6 @@ function Row(props) {
                       <TableCell>last Visit</TableCell>
                       <TableCell>Last procedure</TableCell>
                       <TableCell>Last Payment</TableCell>
-                      {/* <TableCell>Last payment</TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -210,14 +465,40 @@ export default function PatientListGrid() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [patients, setPatients] = useState(data);
+  const [responsiveSearchBar, setResponsiveSearchBar] = useState(false);
+  const [isPatientsLoading, setPatientsLoading] = useState(false);
+  const api_url = 'http://localhost:5000/api/patients/all';
 
   const displayData = query => {
     setPatients(
       data.filter(patient => patient.name.toLowerCase().indexOf(query) !== -1)
     );
   };
+
+  useEffect(() => {
+    data = [];
+    setPatientsLoading(true);
+    axios
+      .get(api_url, config)
+      .then(res => {
+        if (res.data) {
+          res.data.forEach(patient => {
+            const { personalInfo, _id } = patient;
+            const { firstName, lastName, phoneNumber, age } = personalInfo;
+            data.push(
+              createData(_id, `${firstName} ${lastName}`, age, phoneNumber, 8)
+            );
+          });
+
+          setPatients(data);
+          setPatientsLoading(false);
+        }
+      })
+      .catch(err => console.log(err.response.message));
+  }, []);
   useEffect(() => {
     displayData(searchBar);
   }, [searchBar]);
@@ -246,28 +527,41 @@ export default function PatientListGrid() {
         <Typography className={classes.headingTitle} variant="h5">
           Patient List
         </Typography>
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          startIcon={<AddIcon />}
-          component={RouterLink}
-          to="/patients/new"
-        >
-          Add new Patient
-        </Button>
-        <TextField
-          value={searchBar}
-          onChange={handleSearchBar}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          placeholder="Search for a patient..."
-        ></TextField>
+        {!responsiveSearchBar && (
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            component={RouterLink}
+            to="/patients/new"
+            className={classes.addButton}
+          >
+            <AddIcon size="small" />
+            <span className={classes.addHidden}>Add new patient</span>
+          </Button>
+        )}
+        <div className={classes.searchContainer}>
+          <IconButton
+            onClick={() =>
+              window.innerWidth < 520 &&
+              setResponsiveSearchBar(!responsiveSearchBar)
+            }
+          >
+            <SearchIcon size="small" />
+          </IconButton>
+
+          <TextField
+            autoFocus
+            value={searchBar}
+            onChange={handleSearchBar}
+            placeholder="Search..."
+            className={
+              responsiveSearchBar
+                ? classes.responsiveSearchBar
+                : classes.searchField
+            }
+          ></TextField>
+        </div>
       </Box>
       <TableContainer style={{ borderRadius: '0px' }} component={Paper}>
         <Table>
@@ -279,15 +573,27 @@ export default function PatientListGrid() {
           />
 
           <TableBody>
-            {stableSort(patients, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                return <Row key={index} row={row} />;
-              })}
+            {isPatientsLoading ? (
+              <CircularProgress />
+            ) : (
+              stableSort(patients, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  return <Row key={index} row={row} />;
+                })
+            )}
             {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
+            )}
+            {!patients && (
+              <Skeleton
+                variant="rect"
+                width={200}
+                height={200}
+                animation="wave"
+              />
             )}
           </TableBody>
         </Table>
@@ -295,7 +601,7 @@ export default function PatientListGrid() {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={patients.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}

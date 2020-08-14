@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 //PROBLEM : DISABLED TEXT FIELD IS ADDING WHEN FILLED THEN PRESSED
 import axios from 'axios';
 import {
@@ -21,12 +21,21 @@ import {
   ListItem,
   Fab,
   IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DashboardNavbar from '../components/DashboardNavbar';
 import { makeStyles } from '@material-ui/core/styles';
 import PersonalForm from '../components/NewPatient/PersonalForm';
 import MedicalForm from '../components/NewPatient/MedicalForm';
+import Overview from '../components/NewPatient/Overview';
+import { UserData } from '../Contexts/UserDataContext';
+import Joi from '@hapi/joi';
+import { TrafficOutlined, TramOutlined } from '@material-ui/icons';
 
 const url = 'http://localhost:5000/patients/new';
 
@@ -48,7 +57,8 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
   actionsContainer: {
-    marginBottom: theme.spacing(2),
+    // marginLeft: theme.spacing(2),
+    textAlign: 'center',
   },
   resetContainer: {
     padding: theme.spacing(3),
@@ -56,6 +66,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function NewPatient() {
+  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
+
   const [gridFields, setGridFields] = useState({
     allergies: '',
     conditions: '',
@@ -64,10 +77,11 @@ export default function NewPatient() {
   const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
     lastName: '',
-    gender: 'female',
-    dateOfBirth: '',
+    gender: '',
+    age: '',
     address: '',
     phoneNumber: '',
+    occupation: '',
   });
   const [medicalInfo, setMedicalInfo] = useState({
     medicalConditions: 'no',
@@ -78,30 +92,119 @@ export default function NewPatient() {
     allergies: 'no',
     allergyFrom: [],
   });
+  const [errors, setErrors] = useState({
+    firstName: null,
+    lastName: null,
+    occuption: null,
+    phoneNumber: null,
+    address: null,
+    age: null,
+  });
 
-  const values = {
-    firstName: personalInfo.firstName,
-    lastName: personalInfo.lastName,
-    dateOfBirth: personalInfo.dateOfBirth,
-    address: personalInfo.address,
-    gender: personalInfo.gender,
-    medicalConditions: medicalInfo.medicalConditions,
-    conditions: medicalInfo.conditions,
-    pastMedications: medicalInfo.pastMedications,
-    surgeries: medicalInfo.surgeries,
-    pastSurgeries: medicalInfo.pastSurgeries,
-    allergies: Boolean(medicalInfo.allergies),
-    allergyFrom: medicalInfo.allergyFrom,
+  const nameReg = /^[a-zA-Z ]*$/;
+  const addressReg = /^[a-zA-Z0-9 ]*$/;
+  const numReg = /^[0-9]+$/;
+  const schema = Joi.object({
+    firstName: Joi.string().regex(nameReg).min(2).max(15),
+    lastName: Joi.string().regex(nameReg).min(2).max(10),
+    address: Joi.string().regex(addressReg).min(3),
+    occupation: Joi.string().regex(nameReg).min(3).max(20),
+    // age: Joi.string().regex(numReg),
+    age: Joi.string().regex(numReg).min(1),
+    phoneNumber: Joi.string().regex(numReg).min(5),
+  });
+  const openConfirmationDialog = () => {
+    setConfirmationDialogOpen(true);
   };
-  const [activeStep, setActiveStep] = useState(0);
-  const steps = [
-    'Patient Personal Info',
-    'Patient Medical Info',
-    'Create an ad',
-  ];
+  const closeConfirmationDialog = () => {
+    setConfirmationDialogOpen(false);
+  };
+  const validateData = type => {
+    if (personalInfo[type] === '') {
+      setErrors({
+        ...errors,
+        [type]: null,
+      });
+      return true;
+    }
+    const value = personalInfo[type];
+    const { error } = schema.validate({ [type]: value });
+    if (!error) {
+      setErrors({
+        ...errors,
+        [type]: null,
+      });
+      return true;
+    } else {
+      setErrors({
+        ...errors,
+        [type]: 'Invalid Entry',
+      });
+      return false;
+    }
+  };
 
+  const proceed = type => {
+    let empty = [];
+    for (let key in personalInfo) {
+      if (personalInfo[key] === '') {
+        empty.push(key);
+      }
+    }
+    if (empty.length !== 0) {
+      console.log('there are empty inputs');
+
+      setConfirmationDialogOpen(true);
+      return false;
+    }
+
+    for (let key in errors) {
+      if (errors[key] !== null) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const [activeStep, setActiveStep] = useState(0);
+  const steps = ['Patient Personal Info', 'Patient Medical Info', 'Overview'];
+  const newPatientUrl = 'http://localhost:5000/api/patients/new';
+
+  let config = {
+    headers: {
+      authorization: `Bearer ${localStorage.token}`,
+    },
+  };
+  const createNewPatient = newPatientData => {
+    console.log('patient data is ' + { newPatientData });
+    axios
+      .post(newPatientUrl, newPatientData, config)
+      .then(res => console.log(res))
+      .catch(err => console.log(err.response));
+  };
+
+  const handleSubmit = () => {
+    const newPatientData = {
+      personalInfo: {
+        ...personalInfo,
+        // firstName: personalInfo.firstName,
+        // lastName: personalInfo.lastName,
+        // gender: personalInfo.gender,
+        // age: personalInfo.age,
+        // address: personalInfo.address,
+        // phoneNumber: personalInfo.phoneNumber,
+        // occupation: personalInfo.occupation,
+      },
+      medicalInfo: {
+        medicalConditions: medicalInfo.conditions,
+        pastSurgeries: medicalInfo.pastSurgeries,
+        allergies: medicalInfo.allergyFrom,
+      },
+    };
+
+    createNewPatient(newPatientData);
+  };
   const handlePersonalChange = e => {
-    console.log(e.target.name);
     setPersonalInfo({
       ...personalInfo,
       [e.target.name]: e.target.value,
@@ -126,12 +229,9 @@ export default function NewPatient() {
   };
 
   const classes = useStyles();
-  const sendRequest = e => {
-    e.preventDefault();
-    axios.post(url).then(res => console.log(res));
-  };
+
   const handleAddAllergy = () => {
-    if (!gridFields.allergies) {
+    if (!gridFields.allergies || gridFields.allergies.startsWith(' ')) {
       return;
     }
     let allergyArr = [...medicalInfo.allergyFrom];
@@ -146,7 +246,7 @@ export default function NewPatient() {
     });
   };
   const handleAddCondition = () => {
-    if (!gridFields.conditions) {
+    if (!gridFields.conditions || gridFields.conditions.startsWith(' ')) {
       return;
     }
     let conditionsArr = [...medicalInfo.conditions];
@@ -161,7 +261,7 @@ export default function NewPatient() {
     });
   };
   const handleAddSurgery = () => {
-    if (!gridFields.pastSurgeries) {
+    if (!gridFields.pastSurgeries || gridFields.pastSurgeries.startsWith(' ')) {
       return;
     }
     let pastSurgeriesArr = [...medicalInfo.pastSurgeries];
@@ -172,13 +272,28 @@ export default function NewPatient() {
     });
     setGridFields({
       ...gridFields,
-      surgeries: '',
+      pastSurgeries: '',
     });
   };
 
   return (
     <div className={classes.root}>
       <DashboardNavbar />
+      <Dialog onClose={closeConfirmationDialog} open={confirmationDialogOpen}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContentText>are you sure ?</DialogContentText>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handleNext();
+              closeConfirmationDialog();
+            }}
+          >
+            Yes
+          </Button>
+          <Button onClick={closeConfirmationDialog}>No</Button>
+        </DialogActions>
+      </Dialog>
       <form className={classes.form}>
         <Stepper
           className={classes.stepper}
@@ -186,29 +301,30 @@ export default function NewPatient() {
           orientation="vertical"
         >
           <Step>
-            <StepLabel>Patient's personal info</StepLabel>
+            <StepLabel>
+              <Typography variant="h6" style={{ fontWeight: 'unset' }}>
+                Patient's Personal Info
+              </Typography>
+            </StepLabel>
 
             <StepContent>
               <PersonalForm
                 handlePersonalChange={handlePersonalChange}
                 personalInfo={personalInfo}
+                validateData={validateData}
+                errors={errors}
               />
 
               <div className={classes.actionsContainer}>
                 <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  className={classes.button}
-                >
-                  Back
-                </Button>
-                <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleNext}
+                  onClick={() => {
+                    proceed() && handleNext();
+                  }}
                   className={classes.button}
                 >
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                  Next
                 </Button>
               </div>
             </StepContent>
@@ -217,7 +333,9 @@ export default function NewPatient() {
             <StepLabel
               optional={<Typography variant="caption">Optional</Typography>}
             >
-              Patient's Medical Info
+              <Typography variant="h6" style={{ fontWeight: 'unset' }}>
+                Patient's Medical Info
+              </Typography>
             </StepLabel>
             <StepContent>
               <Grid container spacing={1}>
@@ -376,14 +494,10 @@ export default function NewPatient() {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item>
+                <Grid xs={12} item>
                   <div className={classes.actionsContainer}>
                     <div>
-                      <Button
-                        disabled={activeStep === 0}
-                        onClick={handleBack}
-                        className={classes.button}
-                      >
+                      <Button onClick={handleBack} className={classes.button}>
                         Back
                       </Button>
                       <Button
@@ -392,7 +506,7 @@ export default function NewPatient() {
                         onClick={handleNext}
                         className={classes.button}
                       >
-                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                        Next
                       </Button>
                     </div>
                   </div>
@@ -401,18 +515,12 @@ export default function NewPatient() {
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>3</StepLabel>
+            <StepLabel style={{ fontSize: '1.1rem' }}>Overview</StepLabel>
             <StepContent>
-              <TextField variant="outlined" label="First name" />
-              <TextField variant="outlined" label="First name" />
-              <TextField variant="outlined" label="First name" />
+              <Overview personalInfo={personalInfo} medicalInfo={medicalInfo} />
               <div className={classes.actionsContainer}>
                 <div>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={classes.button}
-                  >
+                  <Button onClick={handleBack} className={classes.button}>
                     Back
                   </Button>
                   <Button
@@ -421,21 +529,27 @@ export default function NewPatient() {
                     onClick={handleNext}
                     className={classes.button}
                   >
-                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                    Finish
                   </Button>
                 </div>
               </div>
             </StepContent>
           </Step>
+          {activeStep === steps.length && (
+            <Paper elevation={0} className={classes.resetContainer}>
+              <Typography>
+                All steps completed - you&apos;re finished
+              </Typography>
+              <Button onClick={handleReset} className={classes.button}>
+                Reset
+              </Button>
+              <Button className={classes.button} onClick={handleSubmit}>
+                Save
+              </Button>
+              <Button className={classes.button}>Save and go to profile</Button>
+            </Paper>
+          )}
         </Stepper>
-        {activeStep === steps.length && (
-          <Paper square elevation={0} className={classes.resetContainer}>
-            <Typography>All steps completed - you&apos;re finished</Typography>
-            <Button onClick={handleReset} className={classes.button}>
-              Reset
-            </Button>
-          </Paper>
-        )}
       </form>
     </div>
   );

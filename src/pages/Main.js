@@ -4,27 +4,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import Hero from '../components/Hero';
 import heroImage from '../images/hero.png';
 import HeroBackground from '../vectors/HeroBackground';
-import bgSvg from '../vectors/bg.svg';
+// import bgSvg from '../vectors/bg.png';
 import WhyDontoHub from '../components/WhyDontoHub';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    // flexGrow: 1,
-    background: 'linear-gradient(45deg,#07AFAF,#7037D2)',
-    // backgroundImage: `url(${bgSvg})`,
-    // background: '#888',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    minHeight: '100vh',
-    // width: '100%',
-    display: 'block',
-  },
-}));
+const useStyles = makeStyles(theme => ({}));
 export default function Main() {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
-      <Navbar />
+    <div>
       <Hero />
       <WhyDontoHub />
     </div>

@@ -17,9 +17,9 @@ import {
   TextField,
   IconButton,
 } from '@material-ui/core/';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { Link as RouterLink } from 'react-router-dom';
 // const options = ['Check-in patient', 'Quick check-in', 'Check-in new patient'];
@@ -92,6 +92,25 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})(props => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
+));
 
 export default function DashboardNavbar() {
   const classes = useStyles();
@@ -100,58 +119,31 @@ export default function DashboardNavbar() {
   const [open, setOpen] = useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [responsiveAnchorEl, setResponsiveAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const history = useHistory();
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    history.push('/');
+  };
   const handleClick = event => {
-    setAnchorEl(event.currentTarget);
+    setResponsiveAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null);
+    setResponsiveAnchorEl(null);
   };
-  // const handleCheckInClick = event => {
-  //   event.preventDefault();
-  //   if (event.target.textContent === 'Check-in patient') {
-  //     setCheckInModalOpen(true);
-  //   } else if (event.target.textContent === 'Quick check-in') {
-  //     setQuickCheckInModalOpen(true);
-  //   }
-  // };
-
-  // const handleMenuItemClick = (event, index) => {
-  //   setSelectedIndex(index);
-  //   setOpen(false);
-  // };
-
-  // const handleToggle = () => {
-  //   setOpen(prevOpen => !prevOpen);
-  // };
-
-  // const handleClose = event => {
-  //   if (anchorRef.current && anchorRef.current.contains(event.target)) {
-  //     return;
-  //   }
-  //   setOpen(false);
-  // };
-  const handleModalClose = () => {
-    setCheckInModalOpen(false);
-    setQuickCheckInModalOpen(false);
+  const handleMenuClose = () => {
+    setAnchorEl(false);
   };
-  const modalBody = (
-    <div className={classes.modal}>
-      <h2 style={{ fontSize: '2em' }}>
-        {selectedIndex === 0 ? 'Check-in patient' : 'Quick check-in'}
-      </h2>
-      <TextField
-        variant="standard"
-        label={`Patient's Name`}
-        autoFocus
-      ></TextField>
-    </div>
-  );
+  const handleMenuOpen = e => {
+    setAnchorEl(e.currentTarget);
+  };
   return (
     <div>
-      <Modal open={checkInModalOpen} onClose={handleModalClose}>
+      {/* <Modal open={checkInModalOpen} onClose={handleModalClose}>
         {modalBody}
-      </Modal>
+      </Modal> */}
       <AppBar className={classes.root} position="static">
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" className={classes.title}>
@@ -160,6 +152,13 @@ export default function DashboardNavbar() {
             </Link>
           </Typography>
 
+          <Button
+            component={Link}
+            className={`${classes.link} ${classes.patientsHidden}`}
+            to="/dashboard"
+          >
+            Dashboard
+          </Button>
           <Button
             component={Link}
             className={`${classes.link} ${classes.patientsHidden}`}
@@ -178,11 +177,13 @@ export default function DashboardNavbar() {
           <IconButton className={classes.menu} onClick={handleClick}>
             <MoreVertIcon size="small" />
           </IconButton>
+
+          {/* Responsive Menu */}
           <Menu
             variant="selectedMenu"
-            anchorEl={anchorEl}
+            anchorEl={responsiveAnchorEl}
             keepMounted
-            open={Boolean(anchorEl)}
+            open={Boolean(responsiveAnchorEl)}
             onClose={handleClose}
           >
             <MenuItem
@@ -224,6 +225,7 @@ export default function DashboardNavbar() {
           <Button
             component={Link}
             className={`${classes.hidden} ${classes.link}`}
+            to="/lab"
           >
             Lab
           </Button>
@@ -233,80 +235,84 @@ export default function DashboardNavbar() {
           >
             Inventory
           </Button>
-          <Button
-            component={Link}
-            className={`${classes.hidden} ${classes.link}`}
-          >
-            Settings
-          </Button>
+          <ButtonGroup>
+            <Button
+              color="primary"
+              variant="contained"
+              component={Link}
+              className={`${classes.hidden} ${classes.link}`}
+            >
+              Dr.Ahmad Zaaza
+            </Button>
+            <Button
+              color="primary"
+              onClick={handleMenuOpen}
+              size="small"
+              variant="contained"
+            >
+              <ArrowDropDownIcon />
+            </Button>
+          </ButtonGroup>
         </Toolbar>
+        <StyledMenu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleMenuClose}>
+            <Link className={classes.link}>Account</Link>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <Link className={classes.link}>Settings</Link>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <Link onClick={logout} className={classes.link}>
+              Logout
+            </Link>
+          </MenuItem>
+        </StyledMenu>
       </AppBar>
     </div>
   );
 }
 
-{
-  /* <Grid item xs="auto" sm="auto">
-              <ButtonGroup
-                variant="contained"
-                color="secondary"
-                ref={anchorRef}
-                aria-label="split button"
-              >
-                <Button
-                  onClick={event => {
-                    handleCheckInClick(event);
-                  }}
-                >
-                  {options[selectedIndex]}
-                </Button>
-                <Button
-                  color="secondary"
-                  size="small"
-                  aria-controls={open ? 'split-button-menu' : undefined}
-                  aria-expanded={open ? 'true' : undefined}
-                  aria-label="select merge strategy"
-                  aria-haspopup="menu"
-                  onClick={handleToggle}
-                >
-                  <ArrowDropDownIcon />
-                </Button>
-              </ButtonGroup>
+// const handleCheckInClick = event => {
+//   event.preventDefault();
+//   if (event.target.textContent === 'Check-in patient') {
+//     setCheckInModalOpen(true);
+//   } else if (event.target.textContent === 'Quick check-in') {
+//     setQuickCheckInModalOpen(true);
+//   }
+// };
 
-              <Popper
-                open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === 'bottom' ? 'center top' : 'center bottom',
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList id="split-button-menu">
-                          {options.map((option, index) => (
-                            <MenuItem
-                              key={option}
-                              selected={index === selectedIndex}
-                              onClick={event =>
-                                handleMenuItemClick(event, index)
-                              }
-                            >
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </Grid> */
-}
+// const handleMenuItemClick = (event, index) => {
+//   setSelectedIndex(index);
+//   setOpen(false);
+// };
+
+// const handleToggle = () => {
+//   setOpen(prevOpen => !prevOpen);
+// };
+
+// const handleClose = event => {
+//   if (anchorRef.current && anchorRef.current.contains(event.target)) {
+//     return;
+//   }
+//   setOpen(false);
+// };
+// const handleModalClose = () => {
+//   setCheckInModalOpen(false);
+//   setQuickCheckInModalOpen(false);
+// };
+// const modalBody = (
+//   <div className={classes.modal}>
+//     <h2 style={{ fontSize: '2em' }}>
+//       {selectedIndex === 0 ? 'Check-in patient' : 'Quick check-in'}
+//     </h2>
+//     <TextField
+//       variant="standard"
+//       label={`Patient's Name`}
+//       autoFocus
+//     ></TextField>
+//   </div>
+// );

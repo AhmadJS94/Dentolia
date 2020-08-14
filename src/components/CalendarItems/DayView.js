@@ -47,16 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DayView({
-  date,
-  setDate,
-  isWeekView,
-  isMonthView,
-  setWeekView,
-  setMonthView,
-  isDayView,
-  setDayView,
-}) {
+export default function DayView() {
   const classes = useStyles();
   const days = ['', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const hours = [
@@ -135,7 +126,7 @@ export default function DayView({
   };
   return (
     <>
-      <CalendarHeader
+      {/* <CalendarHeader
         isWeekView={isWeekView}
         isMonthView={isMonthView}
         setMonthView={setMonthView}
@@ -144,7 +135,7 @@ export default function DayView({
         setDate={setDate}
         isDayView={isDayView}
         setDayView={setDayView}
-      />
+      /> */}
       <div className={classes.container}>
         {/* {generateDays()} */}
         {generateRows()}

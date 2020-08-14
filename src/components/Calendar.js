@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import MonthView from './CalendarItems/MonthView';
@@ -6,6 +6,9 @@ import WeekView from './CalendarItems/WeekView';
 import DayView from './CalendarItems/DayView';
 import { Tooltip, Typography } from '@material-ui/core';
 import Zoom from '@material-ui/core/Zoom';
+import CalendarHeader from './CalendarItems/CalendarHeader';
+import axios from 'axios';
+// import { UserData } from '../Contexts/UserDataContext';
 
 moment.updateLocale('en', {
   week: {
@@ -22,8 +25,12 @@ const LightTooltip = withStyles(theme => ({
   },
 }))(Tooltip);
 const useStyles = makeStyles(theme => ({
+  calendarContainer: {
+    padding: '0 35px',
+    borderRadius: '20px',
+  },
   cells: {
-    padding: '7px',
+    paddingLeft: '5px',
     background: ' #222227',
     color: '#eee',
     fontSize: '1.5em',
@@ -61,6 +68,25 @@ export default function Calendar() {
   const [isDayView, setDayView] = useState(false);
 
   const [date, setDate] = useState({ date: moment() });
+  const [appointments, setAppointments] = useState([]);
+  // const { appointments } = useContext(UserData);
+  // console.log('appointments are ', appointments);
+  const api_url = 'http://localhost:5000/api/appointments/all';
+  useEffect(() => {
+    console.log(`i am triggered`);
+    // setAppointmentsLoading(true)
+    axios(api_url, config).then(res => {
+      // console.log(res.data);
+      setAppointments(res.data);
+      // setAppointmentsLoading(false);
+    });
+    // .catch(err => console.log(err.response));
+  }, []);
+  let config = {
+    headers: {
+      authorization: `Bearer ${localStorage.token}`,
+    },
+  };
 
   const lastDateOfCurrentMonth = moment()
     .year(date.date.year())
@@ -248,22 +274,26 @@ export default function Calendar() {
   };
 
   return (
-    <div style={{ padding: '0 75px', borderRadius: '20px' }}>
+    <div className={classes.calendarContainer}>
+      <CalendarHeader
+        isWeekView={isWeekView}
+        isMonthView={isMonthView}
+        setMonthView={setMonthView}
+        setWeekView={setWeekView}
+        isDayView={isDayView}
+        setDayView={setDayView}
+        date={date}
+        setDate={setDate}
+      />
       {isWeekView && (
         <WeekView
-          isWeekView={isWeekView}
-          isMonthView={isMonthView}
-          setMonthView={setMonthView}
-          setWeekView={setWeekView}
-          isDayView={isDayView}
-          setDayView={setDayView}
-          date={date}
-          setDate={setDate}
           todayIndex={todayIndex}
           firstDateOfWeek={firstDateOfWeek}
           firstDateInMonth={firstDateInMonth}
           thisMonthDays={thisMonthDays}
           lastDateOfCurrentWeek={lastDateOfCurrentWeek}
+          date={date}
+          appointments={appointments}
         />
       )}
       {isMonthView && (
@@ -271,29 +301,10 @@ export default function Calendar() {
           generateCells={generateCells}
           generateNextCells={generateNextCells}
           generatePrevCells={generatePrevCells}
-          date={date}
-          setDate={setDate}
-          isWeekView={isWeekView}
-          isMonthView={isMonthView}
-          setMonthView={setMonthView}
-          setWeekView={setWeekView}
-          isDayView={isDayView}
-          setDayView={setDayView}
           generateDays={generateDays}
         />
       )}
-      {isDayView && (
-        <DayView
-          date={date}
-          setDate={setDate}
-          isWeekView={isWeekView}
-          isMonthView={isMonthView}
-          setMonthView={setMonthView}
-          setWeekView={setWeekView}
-          isDayView={isDayView}
-          setDayView={setDayView}
-        />
-      )}
+      {isDayView && <DayView />}
     </div>
   );
 }
