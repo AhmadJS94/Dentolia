@@ -43,11 +43,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { UserData } from '../Contexts/UserDataContext';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Alert from '@material-ui/lab/Alert';
-let config = {
-  headers: {
-    authorization: `Bearer ${localStorage.token}`,
-  },
-};
+
 function createData(_id, name, age, phone, visits) {
   return { _id, name, age, phone, visits };
 }
@@ -161,6 +157,11 @@ function Row(props) {
   const classes = useRowStyles();
   const toggleSnackBar = () => {
     setSnackBarOpen(!snackBarOpen);
+  };
+  let config = {
+    headers: {
+      authorization: `Bearer ${localStorage.token}`,
+    },
   };
   const checkAppointmentAvailability = () => {
     let day = selectedDate.clone().format('ddd');
@@ -477,7 +478,11 @@ export default function PatientListGrid() {
       data.filter(patient => patient.name.toLowerCase().indexOf(query) !== -1)
     );
   };
-
+  let config = {
+    headers: {
+      authorization: `Bearer ${localStorage.token}`,
+    },
+  };
   useEffect(() => {
     data = [];
     setPatientsLoading(true);

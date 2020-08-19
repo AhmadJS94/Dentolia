@@ -36,6 +36,7 @@ import Overview from '../components/NewPatient/Overview';
 import { UserData } from '../Contexts/UserDataContext';
 import Joi from '@hapi/joi';
 import { TrafficOutlined, TramOutlined } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
 
 const url = 'http://localhost:5000/patients/new';
 
@@ -68,6 +69,7 @@ const useStyles = makeStyles(theme => ({
 export default function NewPatient() {
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
+  const history = useHistory();
 
   const [gridFields, setGridFields] = useState({
     allergies: '',
@@ -146,9 +148,28 @@ export default function NewPatient() {
 
   const proceed = type => {
     let empty = [];
+    if (personalInfo.firstName === '') {
+      setErrors({
+        ...errors,
+        firstName: 'Please enter a name',
+      });
+      return false;
+    }
+    if (personalInfo.lastName === '') {
+      setErrors({
+        ...errors,
+        lastName: 'Please enter a name',
+      });
+      return false;
+    }
     for (let key in personalInfo) {
       if (personalInfo[key] === '') {
         empty.push(key);
+      }
+    }
+    for (let key in errors) {
+      if (errors[key] !== null) {
+        return false;
       }
     }
     if (empty.length !== 0) {
@@ -158,11 +179,6 @@ export default function NewPatient() {
       return false;
     }
 
-    for (let key in errors) {
-      if (errors[key] !== null) {
-        return false;
-      }
-    }
     return true;
   };
 
@@ -177,13 +193,10 @@ export default function NewPatient() {
   };
   const createNewPatient = newPatientData => {
     console.log('patient data is ' + { newPatientData });
-    axios
-      .post(newPatientUrl, newPatientData, config)
-      .then(res => console.log(res))
-      .catch(err => console.log(err.response));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = e => {
+    e.preventDefault();
     const newPatientData = {
       personalInfo: {
         ...personalInfo,
@@ -202,7 +215,16 @@ export default function NewPatient() {
       },
     };
 
-    createNewPatient(newPatientData);
+    // createNewPatient(newPatientData);
+    axios
+      .post(newPatientUrl, newPatientData, config)
+      .then(res => {
+        if (res.data.message === 'Success') {
+          console.log(res);
+          history.push('/patients');
+        }
+      })
+      .catch(err => console.log(err.response));
   };
   const handlePersonalChange = e => {
     setPersonalInfo({
@@ -543,7 +565,11 @@ export default function NewPatient() {
               <Button onClick={handleReset} className={classes.button}>
                 Reset
               </Button>
-              <Button className={classes.button} onClick={handleSubmit}>
+              <Button
+                type="submit"
+                className={classes.button}
+                onClick={handleSubmit}
+              >
                 Save
               </Button>
               <Button className={classes.button}>Save and go to profile</Button>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, useHistory } from 'react-router-dom';
 import {
   List,
   ListItemIcon,
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     height: 224,
   },
 }));
-export default function DentalInfoCard({ page, history }) {
+export default function DentalInfoCard({}) {
   const indexToRoute = {
     0: 'chart',
     1: 'treatments',
@@ -59,8 +59,9 @@ export default function DentalInfoCard({ page, history }) {
     treatments: 1,
     // dental: 2,
   };
+  const history = useHistory();
   const classes = useStyles();
-  const [selectedValue, setSelectedValue] = useState(routeToIndex[page]);
+  const [selectedValue, setSelectedValue] = useState(0);
   const handleChange = (event, newValue) => {
     history.push(indexToRoute[newValue]);
     setSelectedValue(newValue);

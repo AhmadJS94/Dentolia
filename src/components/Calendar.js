@@ -69,18 +69,12 @@ export default function Calendar() {
 
   const [date, setDate] = useState({ date: moment() });
   const [appointments, setAppointments] = useState([]);
-  // const { appointments } = useContext(UserData);
-  // console.log('appointments are ', appointments);
+
   const api_url = 'http://localhost:5000/api/appointments/all';
   useEffect(() => {
-    console.log(`i am triggered`);
-    // setAppointmentsLoading(true)
     axios(api_url, config).then(res => {
-      // console.log(res.data);
       setAppointments(res.data);
-      // setAppointmentsLoading(false);
     });
-    // .catch(err => console.log(err.response));
   }, []);
   let config = {
     headers: {
@@ -170,20 +164,32 @@ export default function Calendar() {
   // HINT : DOESN'T WORK ON PREVIOUS AND NEXT YEARS
   //try adding SELECTED state
   const handleClickInMonthView = e => {
-    let date = e.target.textContent;
+    let selectedDate = e.target.textContent;
     let className = e.target.classList;
-    console.log(date);
+    console.log(selectedDate);
     setDayView(true);
     setMonthView(false);
-    if (className[0] === 'makeStyles-prevCells-7') {
+    console.log(className);
+    if (className[0] === 'makeStyles-prevCells-16') {
+      console.log(true);
       setDate({
-        date: moment().year(date.date.year()).subtract(1, 'month').date(date),
+        date: moment()
+          .clone()
+          .year(date.date.year())
+          .subtract(1, 'month')
+          .date(selectedDate),
       });
-    } else if (className[0] === 'makeStyles-cells-6') {
-      setDate({ date: moment().year(date.date.year()).date(date) });
-    } else if (className[0] === 'makeStyles-nextCells-8') {
+    } else if (className[0] === 'makeStyles-cells-15') {
       setDate({
-        date: moment().year(date.date.year()).add(1, 'month').date(date),
+        date: moment().clone().year(date.date.year()).date(selectedDate),
+      });
+    } else if (className[0] === 'makeStyles-nextCells-17') {
+      setDate({
+        date: moment()
+          .clone()
+          .year(date.date.year())
+          .add(1, 'month')
+          .date(selectedDate),
       });
     }
   };
@@ -304,7 +310,7 @@ export default function Calendar() {
           generateDays={generateDays}
         />
       )}
-      {isDayView && <DayView />}
+      {isDayView && <DayView date={date} />}
     </div>
   );
 }

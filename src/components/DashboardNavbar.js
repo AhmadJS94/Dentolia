@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     background: 'inherit',
     boxShadow: 'none',
+    zIndex: theme.zIndex.drawer + 1,
   },
   title: {
     flexGrow: 1,
@@ -140,139 +141,134 @@ export default function DashboardNavbar() {
     setAnchorEl(e.currentTarget);
   };
   return (
-    <div>
-      {/* <Modal open={checkInModalOpen} onClose={handleModalClose}>
-        {modalBody}
-      </Modal> */}
-      <AppBar className={classes.root} position="static">
-        <Toolbar className={classes.toolbar}>
-          <Typography variant="h6" className={classes.title}>
-            <Link className={classes.link} to="/">
-              DontoHub
-            </Link>
-          </Typography>
+    <AppBar position="static" className={classes.root}>
+      <Toolbar className={classes.toolbar}>
+        <Typography variant="h6" className={classes.title}>
+          <Link className={classes.link} to="/">
+            DontoHub
+          </Link>
+        </Typography>
 
-          <Button
-            component={Link}
-            className={`${classes.link} ${classes.patientsHidden}`}
-            to="/dashboard"
-          >
-            Dashboard
-          </Button>
-          <Button
-            component={Link}
-            className={`${classes.link} ${classes.patientsHidden}`}
-            to="/patients"
-          >
-            Patients
-          </Button>
-          <Button
-            component={Link}
-            className={`${classes.link} ${classes.appointmentsHidden}`}
-            to="/appointments"
-          >
-            Appointments
-          </Button>
-
-          <IconButton className={classes.menu} onClick={handleClick}>
-            <MoreVertIcon size="small" />
-          </IconButton>
-
-          {/* Responsive Menu */}
-          <Menu
-            variant="selectedMenu"
-            anchorEl={responsiveAnchorEl}
-            keepMounted
-            open={Boolean(responsiveAnchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem
-              component={Link}
-              to="/patients"
-              className={classes.patientsHiddenMenu}
-              onClick={handleClose}
-            >
-              <Link className={`${classes.link}`} color="inherit">
-                Patients
-              </Link>
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to="/appointments"
-              className={classes.appointmentsHiddenMenu}
-              onClick={handleClose}
-            >
-              <Link className={`${classes.link}`} color="inherit">
-                Appointments
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link className={classes.link} component={Link} color="inherit">
-                Lab
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link className={classes.link} component={Link} color="inherit">
-                Inventory
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link className={classes.link} component={Link} color="inherit">
-                Settings
-              </Link>
-            </MenuItem>
-          </Menu>
-          <Button
-            component={Link}
-            className={`${classes.hidden} ${classes.link}`}
-            to="/lab"
-          >
-            Lab
-          </Button>
-          <Button
-            component={Link}
-            className={`${classes.hidden} ${classes.link}`}
-          >
-            Inventory
-          </Button>
-          <ButtonGroup>
-            <Button
-              color="primary"
-              variant="contained"
-              component={Link}
-              className={`${classes.hidden} ${classes.link}`}
-            >
-              Dr.Ahmad Zaaza
-            </Button>
-            <Button
-              color="primary"
-              onClick={handleMenuOpen}
-              size="small"
-              variant="contained"
-            >
-              <ArrowDropDownIcon />
-            </Button>
-          </ButtonGroup>
-        </Toolbar>
-        <StyledMenu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
+        <Button
+          component={Link}
+          className={`${classes.link} ${classes.patientsHidden}`}
+          to="/dashboard"
         >
-          <MenuItem onClick={handleMenuClose}>
-            <Link className={classes.link}>Account</Link>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <Link className={classes.link}>Settings</Link>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <Link onClick={logout} className={classes.link}>
-              Logout
+          Dashboard
+        </Button>
+        <Button
+          component={Link}
+          className={`${classes.link} ${classes.patientsHidden}`}
+          to="/patients"
+        >
+          Patients
+        </Button>
+        <Button
+          component={Link}
+          className={`${classes.link} ${classes.appointmentsHidden}`}
+          to="/appointments"
+        >
+          Appointments
+        </Button>
+
+        <IconButton className={classes.menu} onClick={handleClick}>
+          <MoreVertIcon size="small" />
+        </IconButton>
+
+        {/* Responsive Menu */}
+        <Menu
+          variant="selectedMenu"
+          anchorEl={responsiveAnchorEl}
+          keepMounted
+          open={Boolean(responsiveAnchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem
+            component={Link}
+            to="/patients"
+            className={classes.patientsHiddenMenu}
+            onClick={handleClose}
+          >
+            <Link className={`${classes.link}`} color="inherit">
+              Patients
             </Link>
           </MenuItem>
-        </StyledMenu>
-      </AppBar>
-    </div>
+          <MenuItem
+            component={Link}
+            to="/appointments"
+            className={classes.appointmentsHiddenMenu}
+            onClick={handleClose}
+          >
+            <Link className={`${classes.link}`} color="inherit">
+              Appointments
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Link className={classes.link} component={Link} color="inherit">
+              Lab
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Link className={classes.link} component={Link} color="inherit">
+              Inventory
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Link className={classes.link} component={Link} color="inherit">
+              Settings
+            </Link>
+          </MenuItem>
+        </Menu>
+        <Button
+          component={Link}
+          className={`${classes.hidden} ${classes.link}`}
+          to="/lab"
+        >
+          Lab
+        </Button>
+        <Button
+          component={Link}
+          className={`${classes.hidden} ${classes.link}`}
+        >
+          Inventory
+        </Button>
+        <ButtonGroup>
+          <Button
+            color="primary"
+            variant="contained"
+            component={Link}
+            className={`${classes.hidden} ${classes.link}`}
+          >
+            Dr.Ahmad Zaaza
+          </Button>
+          <Button
+            color="primary"
+            onClick={handleMenuOpen}
+            size="small"
+            variant="contained"
+          >
+            <ArrowDropDownIcon />
+          </Button>
+        </ButtonGroup>
+      </Toolbar>
+      <StyledMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleMenuClose}>
+          <Link className={classes.link}>Account</Link>
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <Link className={classes.link}>Settings</Link>
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <Link onClick={logout} className={classes.link}>
+            Logout
+          </Link>
+        </MenuItem>
+      </StyledMenu>
+    </AppBar>
   );
 }
 

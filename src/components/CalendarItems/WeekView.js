@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { Tooltip, Zoom, Typography } from '@material-ui/core/';
 import CalendarHeader from './CalendarHeader';
 import moment from 'moment';
 // import { UserData } from '../../Contexts/UserDataContext';
@@ -87,6 +88,7 @@ const useStyles = makeStyles(theme => ({
   appointment: {
     textAlign: 'center',
     width: '100%',
+    cursor: 'pointer',
   },
   firstQ: { position: 'absolute', top: '0%' },
   secondQ: { position: 'absolute', top: '25%' },
@@ -97,6 +99,14 @@ const useStyles = makeStyles(theme => ({
     background: '#dbecf0',
   },
 }));
+const LightTooltip = withStyles(theme => ({
+  tooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.8)',
+    boxShadow: theme.shadows[1],
+    fontSize: 16,
+  },
+}))(Tooltip);
 
 export default function WeekView({
   date,
@@ -237,24 +247,47 @@ export default function WeekView({
         rows.push(
           <div key={`${i}${j}${i}`} className={classes.emptyCell}>
             {sortedAppointments.map((appointment, i) => (
-              <div
+              <LightTooltip
+                placement="top"
+                arrow
+                title={
+                  <>
+                    <Typography>{appointment.name}</Typography>
+                    <Typography>
+                      {' '}
+                      Duration :{' '}
+                      {parseInt(appointment.duration) < 60 &&
+                        `${appointment.duration} Minutes`}
+                      {parseInt(appointment.duration) === 60 && `1 Hour`}
+                      {parseInt(appointment.duration) > 60 &&
+                        ` 1 Hour, ${
+                          parseInt(appointment.duration) - 60
+                        } Minutes`}
+                    </Typography>
+                  </>
+                }
+                TransitionComponent={Zoom}
+                enterDelay={300}
                 key={i}
-                className={`${
-                  appointment.duration === '15' && classes.quarterHour
-                } ${appointment.duration === '30' && classes.halfHour} ${
-                  appointment.duration === '45' && classes.threeQuarters
-                } ${appointment.duration === '60' && classes.fullHour} ${
-                  appointment.duration === '75' && classes.hourQuarter
-                } ${appointment.duration === '90' && classes.hourHalf} ${
-                  classes.appointment
-                } ${appointment.quarter === 1 && classes.firstQ} ${
-                  appointment.quarter === 2 && classes.secondQ
-                } ${appointment.quarter === 3 && classes.thirdQ} ${
-                  appointment.quarter === 4 && classes.forthQ
-                }`}
               >
-                {appointment.name}
-              </div>
+                <div
+                  className={`${
+                    appointment.duration === '15' && classes.quarterHour
+                  } ${appointment.duration === '30' && classes.halfHour} ${
+                    appointment.duration === '45' && classes.threeQuarters
+                  } ${appointment.duration === '60' && classes.fullHour} ${
+                    appointment.duration === '75' && classes.hourQuarter
+                  } ${appointment.duration === '90' && classes.hourHalf} ${
+                    classes.appointment
+                  } ${appointment.quarter === 1 && classes.firstQ} ${
+                    appointment.quarter === 2 && classes.secondQ
+                  } ${appointment.quarter === 3 && classes.thirdQ} ${
+                    appointment.quarter === 4 && classes.forthQ
+                  }`}
+                >
+                  {appointment.name}
+                </div>
+              </LightTooltip>
             ))}
           </div>
         );

@@ -164,14 +164,19 @@ function Row(props) {
 //   createData('test', '15:00', 'restoration'),
 // ];
 const useStyles = makeStyles(theme => ({
+  container: {
+    maxHeight: '280px',
+    minHeight: '280px',
+    overflow: 'auto',
+  },
   toolbar: {
     justifyContent: 'space-evenly',
-    // padding: '6px 6px',
+    padding: '6px 6px',
   },
   gridHeadTitle: {
     fontSize: '1.2em',
     fontWeight: 'bold',
-    // padding: '8px',
+    padding: '8px',
     textAlign: 'center',
   },
 }));
@@ -184,8 +189,8 @@ export default function DashboardAppointmentsTable({
 }) {
   const classes = useStyles();
   return (
-    <>
-      <Toolbar component={Paper} className={classes.toolbar}>
+    <Paper className={classes.container}>
+      <Toolbar className={classes.toolbar}>
         <IconButton
           onClick={() => setAppointmentsToFetch(moment().subtract(1, 'day'))}
           size="small"
@@ -209,7 +214,7 @@ export default function DashboardAppointmentsTable({
           <ArrowForwardIcon />
         </IconButton>
       </Toolbar>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow style={{ padding: 0 }}>
@@ -227,6 +232,6 @@ export default function DashboardAppointmentsTable({
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </Paper>
   );
 }

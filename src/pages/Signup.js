@@ -77,105 +77,137 @@ export default function Signup({ history }) {
       [e.target.name]: e.target.value,
     });
   };
-  const validateEmail = () => {
-    const { email } = formData;
-    if (!email) {
-      setErrors({ ...errors, email: '' });
-      return;
+  const validateData = type => {
+    if (!type) {
+      for (let item in errors) {
+        if (errors[item] !== null) {
+          return false;
+        }
+      }
+      return true;
     }
-    const { error } = schema.validate({ email });
-    console.log(error);
+    if (type === 'confirmPassword') {
+      if (formData.password !== formData.confirmPassword) {
+        setErrors({
+          ...errors,
+          confirmPassword: 'Passwords do not match',
+        });
+        return false;
+      }
+    }
+    if (formData[type] === '') {
+      setErrors({
+        ...errors,
+        [type]: null,
+      });
+      return true;
+    }
+    const value = formData[type];
+    const { error } = schema.validate({ [type]: value });
     if (!error) {
       setErrors({
         ...errors,
-        email: '',
+        [type]: null,
       });
       return true;
     } else {
       setErrors({
         ...errors,
-        email: 'Email is Invalid',
+        [type]: 'Invalid Entry',
       });
       return false;
     }
   };
-  const validatePassword = () => {
-    const { password } = formData;
-    if (!password) {
-      setErrors({ ...errors, password: '' });
-      return;
-    }
-    const { error } = schema.validate({ password });
-    if (!error) {
-      setErrors({
-        ...errors,
-        password: '',
-      });
-      return true;
-    } else {
-      setErrors({
-        ...errors,
-        password: 'password is Invalid',
-      });
-      return false;
-    }
-  };
-  const validateConfirmPassword = () => {
-    const { password, confirmPassword } = formData;
-    // const {error} = schema.validate({confirmPassword})
-    if (password === confirmPassword) {
-      setErrors({
-        ...errors,
+  // const validateEmail = () => {
+  //   const { email } = formData;
+  //   if (!email) {
+  //     setErrors({ ...errors, email: '' });
+  //     return;
+  //   }
+  //   const { error } = schema.validate({ email });
+  //   console.log(error);
+  //   if (!error) {
+  //     setErrors({
+  //       ...errors,
+  //       email: '',
+  //     });
+  //     return true;
+  //   } else {
+  //     setErrors({
+  //       ...errors,
+  //       email: 'Email is Invalid',
+  //     });
+  //     return false;
+  //   }
+  // };
+  // const validatePassword = () => {
+  //   const { password } = formData;
+  //   if (!password) {
+  //     setErrors({ ...errors, password: '' });
+  //     return;
+  //   }
+  //   const { error } = schema.validate({ password });
+  //   if (!error) {
+  //     setErrors({
+  //       ...errors,
+  //       password: '',
+  //     });
+  //     return true;
+  //   } else {
+  //     setErrors({
+  //       ...errors,
+  //       password: 'password is Invalid',
+  //     });
+  //     return false;
+  //   }
+  // };
+  // const validateConfirmPassword = () => {
+  //   const { password, confirmPassword } = formData;
+  //   // const {error} = schema.validate({confirmPassword})
+  //   if (password === confirmPassword) {
+  //     setErrors({
+  //       ...errors,
 
-        confirmPassword: '',
-      });
-      return true;
-    } else {
-      setErrors({
-        ...errors,
+  //       confirmPassword: '',
+  //     });
+  //     return true;
+  //   } else {
+  //     setErrors({
+  //       ...errors,
 
-        confirmPassword: 'passwords do not match',
-      });
-      return false;
-    }
-  };
-  const validateOfficeName = () => {
-    const { officeName } = formData;
-    if (!officeName) {
-      setErrors({ ...errors, officeName: '' });
-      return;
-    }
-    const { error } = schema.validate({ officeName });
+  //       confirmPassword: 'passwords do not match',
+  //     });
+  //     return false;
+  //   }
+  // };
+  // const validateOfficeName = () => {
+  //   const { officeName } = formData;
+  //   if (!officeName) {
+  //     setErrors({ ...errors, officeName: '' });
+  //     return;
+  //   }
+  //   const { error } = schema.validate({ officeName });
 
-    if (!error) {
-      setErrors({
-        ...errors,
-        officeName: '',
-      });
-      return true;
-    } else {
-      setErrors({
-        ...errors,
-        officeName: 'office name is Invalid',
-      });
-      return false;
-    }
-  };
+  //   if (!error) {
+  //     setErrors({
+  //       ...errors,
+  //       officeName: '',
+  //     });
+  //     return true;
+  //   } else {
+  //     setErrors({
+  //       ...errors,
+  //       officeName: 'office name is Invalid',
+  //     });
+  //     return false;
+  //   }
+  // };
 
   const handleSubmit = e => {
     e.preventDefault();
     setLoading(true);
     const { email, password, officeName, confirmPassword } = formData;
-    if (
-      email &&
-      password &&
-      officeName &&
-      confirmPassword &&
-      validateEmail() &&
-      validatePassword() &&
-      validateConfirmPassword() &&
-      validateOfficeName()
-    ) {
+    if (email && password && officeName && confirmPassword && validateData()) {
       axios
         .post('http://localhost:5000/signup', formData)
         .then(res => {
@@ -254,7 +286,7 @@ export default function Signup({ history }) {
                 helperText={Boolean(errors.email) && errors.email}
                 size="small"
                 required
-                onBlur={validateEmail}
+                onBlur={() => validateData('email')}
               />
             </Grid>
 
@@ -275,7 +307,7 @@ export default function Signup({ history }) {
                 helperText={Boolean(errors.password) && errors.password}
                 size="small"
                 required
-                onBlur={validatePassword}
+                onBlur={() => validateData('password')}
               />
             </Grid>
             <Grid item xs={12}>
@@ -294,7 +326,7 @@ export default function Signup({ history }) {
                 onChange={handleChange}
                 size="small"
                 required
-                onBlur={validateConfirmPassword}
+                onBlur={() => validateData('confirmPassword')}
               />
             </Grid>
             <Grid item xs={12}>
@@ -311,7 +343,7 @@ export default function Signup({ history }) {
                 onChange={handleChange}
                 size="small"
                 required
-                onBlur={validateOfficeName}
+                onBlur={() => validateData('officeName')}
               />
             </Grid>
             <Grid

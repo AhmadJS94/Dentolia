@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DashboardNavbar from '../components/DashboardNavbar';
+import DashboardNavbar from './components/DashboardNavbar';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
@@ -28,10 +28,9 @@ import {
   Divider,
   Paper,
 } from '@material-ui/core/';
-// import DentalInfoCard from './components/SinglePatientComponents/DentalInfoCard';
-import PatientOverview from '../components/SinglePatientComponents/PatientOverview';
-import GeneralInfoCard from '../components/SinglePatientComponents/GeneralInfoCard';
-import MedicalRecordCard from '../components/SinglePatientComponents/MedicalRecordCard';
+import DentalInfoCard from './components/SinglePatientComponents/DentalInfoCard';
+import PatientOverview from './components/SinglePatientComponents/PatientOverview';
+import GeneralInfoCard from './components/SinglePatientComponents/GeneralInfoCard';
 const drawerWidth = 200;
 
 const useStyles = makeStyles(theme => ({
@@ -91,7 +90,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     minHeight: '87vh',
     overflow: 'auto',
 
@@ -203,51 +202,27 @@ export default function Test({
         }}
       >
         <List>
-          <ListItem onClick={() => setSelectedValue(0)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Overview'} />
-          </ListItem>
-          <ListItem onClick={() => setSelectedValue(1)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Personal Info'} />
-          </ListItem>
-          <ListItem onClick={() => setSelectedValue(2)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <LocalHospitalIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Health Info'} />
-          </ListItem>
-          <ListItem onClick={() => setSelectedValue(2)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <LocalHospitalIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Dental Info'} />
-          </ListItem>
+          {['Overview', 'Personal Info', 'Health info', 'Dental Info'].map(
+            (text, index) => (
+              <ListItem onClick={() => setSelectedValue(0)} button key={text}>
+                <ListItemIcon style={{ marginLeft: '7px' }}>
+                  {index % 2 === 0 ? <LocalHospitalIcon /> : <PersonIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            )
+          )}
         </List>
         <Divider />
         <List>
-          <ListItem onClick={() => setSelectedValue(4)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <MailIcon />
-            </ListItemIcon>
-            <ListItemText primary={'text'} />
-          </ListItem>
-          <ListItem onClick={() => setSelectedValue(5)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <MailIcon />
-            </ListItemIcon>
-            <ListItemText primary={'text'} />
-          </ListItem>
-          <ListItem onClick={() => setSelectedValue(6)} button>
-            <ListItemIcon style={{ marginLeft: '7px' }}>
-              <MailIcon />
-            </ListItemIcon>
-            <ListItemText primary={'text'} />
-          </ListItem>
+          {['Documents', 'Payments', 'Spam'].map((text, index) => (
+            <ListItem onClick={() => setSelectedValue(1)} button key={text}>
+              <ListItemIcon style={{ marginLeft: '7px' }}>
+                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
         </List>
       </Drawer>
       <Paper className={classes.content}>
@@ -256,13 +231,6 @@ export default function Test({
           <GeneralInfoCard
             personalInfo={personalInfo}
             setPersonalInfo={setPersonalInfo}
-            updateData={updateData}
-          />
-        )}
-        {selectedValue === 2 && !loading && (
-          <MedicalRecordCard
-            medicalInfo={medicalInfo}
-            setMedicalInfo={setMedicalInfo}
             updateData={updateData}
           />
         )}

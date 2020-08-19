@@ -28,8 +28,11 @@ import DentalInfoCard from './components/SinglePatientComponents/DentalInfoCard'
 import Auth from './Auth';
 
 import ProtectedRoute from './ProtectedRoute';
+import SignRoute from './SignRoute';
 import NotAuthorized from './pages/NotAuthorized';
 import UserDataContext from './Contexts/UserDataContext';
+import Test from './Test';
+import MedicalForm from './components/SinglePatientComponents/Forms/MedicalForm';
 
 const theme = createMuiTheme({
   typography: {
@@ -56,8 +59,8 @@ function App() {
             {/* {localStorage.token && (
               <Redirect exact from="/login" to="/dashboard" />
             )} */}
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={Signup} />
+            <SignRoute exact path="/login" component={Login} />
+            <SignRoute exact path="/signup" component={Signup} />
             <ProtectedRoute exact path="/dashboard" component={Dashboard} />
 
             <ProtectedRoute exact path="/patients" component={PatientsList} />
@@ -69,7 +72,7 @@ function App() {
             />
             <ProtectedRoute
               exact
-              path="/patients/:_id/:page"
+              path="/patients/:_id/"
               // render={props => <SinglePatient {...props} />}
               component={SinglePatient}
             />
@@ -98,6 +101,8 @@ function App() {
             <Route exact path="/lab/new" component={NewLab} />
             <Route exact path="/lab/labname" component={SingleLab} />
             <Route exact path="/vector" component={Vector} />
+            <Route exact path="/test" component={Test} />
+            <Route exact path="/form" component={MedicalForm} />
             <Route
               exact
               path="/patients/ahmadzaaza/sessions/new"

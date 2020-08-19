@@ -16,6 +16,7 @@ import {
   InputBase,
   Input,
   CircularProgress,
+  InputLabel,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
@@ -23,15 +24,17 @@ const useStyles = makeStyles(theme => ({
   container: {
     // height: '400px',
     padding: '1em',
+    overflowY: 'auto',
+    // overflowX: 'hidden',
   },
-  gridItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: '5px',
-    // textAlign: 'center',border
-  },
+  // gridItem: {
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   justifyContent: 'flex-start',
+  //   alignItems: 'center',
+  //   marginBottom: '5px',
+  //   // textAlign: 'center',border
+  // },
   Input: {
     border: '1px solid rgba(221, 216, 216, 0.7)',
     marginBottom: '0.5em',
@@ -49,6 +52,25 @@ const useStyles = makeStyles(theme => ({
   title: {
     fontWeight: 'bold',
     transition: 'all 0.2s ease',
+  },
+  inputLabel: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  list: {
+    // alignSelf: 'center',
+    borderBottom: '1px solid #555',
+    // outline: '0',
+    // borderRadius: '7px',
+    transition: 'all 0.5s ease',
+
+    '&:focus': {
+      // border: 'none',
+      borderBottom: '1px solid #555',
+    },
+    '&:hover': {
+      borderBottom: '1px solid #555',
+    },
   },
 }));
 export default function GeneralInfoCard({
@@ -70,160 +92,381 @@ export default function GeneralInfoCard({
 
   const classes = useStyles();
   return (
-    <Grid component={Paper} className={classes.container} container>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          className={classes.title}
-          style={{ marginBottom: edit && '0.5em' }}
-          align="center"
-          variant="h5"
-        >
-          First Name
-        </Typography>
-
-        <InputBase
-          className={edit ? classes.Input : ''}
-          inputProps={{ style: { textAlign: 'center' } }}
-          readOnly={edit ? false : true}
-          value={personalInfo.firstName}
-          name="firstName"
-          onChange={handleChange}
-        />
-      </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          className={classes.title}
-          style={{ marginBottom: edit && '0.5em' }}
-          align="center"
-          variant="h5"
-        >
-          Last Name
-        </Typography>
-
-        <InputBase
-          className={edit ? classes.Input : ''}
-          inputProps={{ style: { textAlign: 'center' } }}
-          readOnly={edit ? false : true}
-          value={personalInfo.lastName}
-          name="lastName"
-          onChange={handleChange}
-        />
-      </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Age
-        </Typography>
-
-        <InputBase
-          className={edit ? classes.Input : ''}
-          inputProps={{ style: { textAlign: 'center' } }}
-          readOnly={edit ? false : true}
-          value={personalInfo.age}
-          name="age"
-          onChange={handleChange}
-        />
-      </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Gender
-        </Typography>
-
-        <InputBase
-          className={edit ? classes.Input : ''}
-          inputProps={{ style: { textAlign: 'center' } }}
-          readOnly={edit ? false : true}
-          value={personalInfo.gender}
-          name="gender"
-          onChange={handleChange}
-        />
-      </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Address
-        </Typography>
-
-        <InputBase
-          className={edit ? classes.Input : ''}
-          inputProps={{ style: { textAlign: 'center' } }}
-          readOnly={edit ? false : true}
-          value={personalInfo.address}
-          name="address"
-          onChange={handleChange}
-        />
-      </Grid>
-      {/* <Grid xs={12} sm={6} item className={classes.gridItem}>
-            <Typography
-              style={{ marginBottom: edit && '0.5em' }}
-              className={classes.title}
-              align="center"
-              variant="h5"
-            >
-              First visit
-            </Typography>
-
-            <InputBase
-              className={edit ? classes.Input : ''}
-              inputProps={{ style: { textAlign: 'center' } }}
-              readOnly={edit ? false : true}
-              value={personalInfo.firstVisit}
-              name="firstVisit"
-              onChange={handleChange}
-            />
-          </Grid> */}
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Phone Number
-        </Typography>
-
-        <InputBase
-          className={edit ? classes.Input : ''}
-          inputProps={{ style: { textAlign: 'center' } }}
-          readOnly={edit ? false : true}
-          value={personalInfo.phoneNumber}
-          name="phoneNumber"
-          onChange={handleChange}
-        />
-      </Grid>
-      <Grid xs={12} item className={classes.gridItem}>
-        <div>
+    <Grid component={Paper} className={classes.container} container spacing={3}>
+      <Grid item container spacing={2} xs={12}>
+        <Grid xs={12} sm={10} item>
+          <Typography variant="h5">Ahmad Zaaza - Personal info</Typography>
+        </Grid>
+        <Grid item xs={12} sm={2}>
           <Button
+            fullWidth
             onClick={handleEditClick}
-            variant="contained"
+            variant="outlined"
             endIcon={<EditIcon />}
+            color="primary"
           >
             Edit
           </Button>
-          {edit && (
-            <Button
-              onClick={() => updateData('personalInfo')}
-              style={{ marginLeft: '5px' }}
-              variant="contained"
-            >
-              Save Changes
-            </Button>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            First Name :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            // disabled={!edit && true}
+            value={personalInfo.firstName}
+            onChange={handleChange}
+            name="firstName"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Last Name :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+            // disabled={!edit && true}
+            value={personalInfo.lastName}
+            onChange={handleChange}
+            name="lastName"
+            readOnly={edit ? false : true}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Age :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            // disabled={!edit && true}
+            value={personalInfo.age}
+            onChange={handleChange}
+            name="age"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Gender :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            // disabled={!edit && true}
+            value={personalInfo.gender}
+            onChange={handleChange}
+            name="gender"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Zip code :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            // disabled={!edit && true}
+            value={personalInfo.phoneNumber}
+            onChange={handleChange}
+            name="phoneNumber"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Address 1 :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            // disabled={!edit && true}
+            value={personalInfo.address}
+            onChange={handleChange}
+            name="address"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Address 2 :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            value={personalInfo.address}
+            onChange={handleChange}
+            name="address"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Email Address :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            value={personalInfo.phoneNumber}
+            onChange={handleChange}
+            name="phoneNumber"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Phone Number 1 :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            // disabled={!edit && true}
+            value={personalInfo.phoneNumber}
+            onChange={handleChange}
+            name="phoneNumber"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Phone Number 2 :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            value={personalInfo.phoneNumber}
+            onChange={handleChange}
+            name="phoneNumber"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            Occupation :
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            value={personalInfo.occupation}
+            onChange={handleChange}
+            name="occupation"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em' } }}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        // md={4}
+        item
+        container
+        // justify="center"
+        alignItems="center"
+        className={classes.gridItem}
+        spacing={1}
+      >
+        <Grid item>
+          <Typography variant="h6" className={classes.inputLabel}>
+            City:
+          </Typography>
+        </Grid>
+        <Grid item>
+          <InputBase
+            value={personalInfo.phoneNumber}
+            onChange={handleChange}
+            name="phoneNumber"
+            readOnly={edit ? false : true}
+            className={edit && classes.list}
+            inputProps={{ style: { fontSize: '1.2em', textAlign: 'center' } }}
+          />
+        </Grid>
+      </Grid>
+      {edit && (
+        <Grid style={{ textAlign: 'center' }} item xs={12}>
+          <Button
+            onClick={() => updateData('personalInfo')}
+            style={{ marginLeft: '5px' }}
+            variant="contained"
+            color="primary"
+          >
+            Save Changes
+          </Button>
+        </Grid>
+      )}
+      {/* <Grid xs={12} item className={classes.gridItem}>
+        <div>
+          
           )}
         </div>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

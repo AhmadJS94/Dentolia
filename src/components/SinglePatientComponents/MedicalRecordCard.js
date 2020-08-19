@@ -11,6 +11,10 @@ import {
   Button,
   Select,
   MenuItem,
+  Divider,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
@@ -20,15 +24,15 @@ const useStyles = makeStyles(theme => ({
     // height: '400px',
     padding: '1em',
   },
-  gridItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    // alignItems: 'center',
-    marginBottom: '1em',
-    // marginLeft: '10px',
-    // textAlign: 'center',border
-  },
+  // gridItem: {
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   justifyContent: 'flex-start',
+  //   // alignItems: 'center',
+  //   marginBottom: '1em',
+  //   // marginLeft: '10px',
+  //   // textAlign: 'center',border
+  // },
   list: {
     alignSelf: 'center',
     border: '1px solid rgba(221, 216, 216, 0.7)',
@@ -53,6 +57,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     marginBottom: '1em',
   },
+  inputLabel: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
 }));
 export default function MedicalRecordCard({
   medicalInfo,
@@ -70,6 +78,41 @@ export default function MedicalRecordCard({
     'O+',
     'O-',
   ];
+  const [allergies, setAllergies] = useState({
+    Adrenaline: false,
+    Aspirin: false,
+    Codeine: false,
+    Ibuprofen: false,
+    Iodine: false,
+    Latex: false,
+    Pencillin: false,
+    Sulfa: false,
+  });
+  const [medicalConditions, setMedicalConditions] = useState({
+    asthma: false,
+    bleeding: false,
+    cancer: false,
+    diabetes: false,
+    bloodPressure: false,
+    liverDisease: false,
+    pregnant: false,
+    kidneyDisease: false,
+    heartProblems: false,
+    stroke: false,
+  });
+
+  const handleAllergiesChange = e => {
+    setAllergies({
+      ...allergies,
+      [e.target.name]: e.target.checked,
+    });
+  };
+  const handleConditionsChange = e => {
+    setMedicalConditions({
+      ...medicalConditions,
+      [e.target.name]: e.target.checked,
+    });
+  };
   const [addInfo, setAddInfo] = useState({
     medications: '',
     allergies: '',
@@ -133,274 +176,519 @@ export default function MedicalRecordCard({
   };
   const classes = useStyles();
   return (
-    <Grid component={Paper} className={classes.container} container>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Medications
-        </Typography>
-        {medicalInfo.medications.length === 0 ? (
-          <InputBase
-            style={{ marginBottom: '1em' }}
-            inputProps={{ style: { textAlign: 'center' } }}
-            readOnly={true}
-            value="No Medications mentioned"
-          />
-        ) : (
-          medicalInfo.medications.map((medication, i) => (
-            <form
-              onSubmit={e => handleDelete(e, i)}
-              className={classes.inputContainer}
-            >
-              <InputBase
-                key={i}
-                className={edit && classes.list}
-                inputProps={{ style: { textAlign: 'center' } }}
-                readOnly={edit ? false : true}
-                value={medication}
-                name="medications"
-                onChange={e => handleChange(e, i)}
-              />
-              {edit && (
-                <IconButton type="submit" size="small">
-                  <HighlightOffRoundedIcon
-                    style={{ fill: '#ba1e4a' }}
-                    size="small"
-                  />
-                </IconButton>
-              )}
-            </form>
-          ))
-        )}
-        {edit && (
-          <form
-            onSubmit={handleAdd}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '6px',
-            }}
+    <Grid component={Paper} className={classes.container} container spacing={3}>
+      <Grid item container spacing={2} xs={12}>
+        <Grid xs={12} sm={10} item>
+          <Typography variant="h5">Ahmad Zaaza - Health info</Typography>
+        </Grid>
+        <Grid item xs={12} sm={2}>
+          <Button
+            fullWidth
+            onClick={handleEditClick}
+            variant="outlined"
+            endIcon={<EditIcon />}
+            color="primary"
           >
-            <TextField
-              style={{ alignSelf: 'center' }}
-              placeholder="Add.."
-              id="medications"
-              name="medications"
-              value={addInfo.medications}
-              onChange={e => {
-                setAddInfo({ ...addInfo, [e.target.name]: e.target.value });
+            Edit
+          </Button>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Divider />
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        item
+        container
+        spacing={1}
+        className={classes.gridItem}
+      >
+        <Grid item xs={12}>
+          <Typography
+            // style={{ marginBottom: edit && '0.5em' }}
+            className={classes.inputLabel}
+            align="center"
+            variant="h6"
+          >
+            Medications
+          </Typography>
+        </Grid>
+        <Grid item xs={12} style={{ textAlign: 'center' }}>
+          {medicalInfo.medications.length === 0 ? (
+            <InputBase
+              style={{ marginBottom: '1em' }}
+              inputProps={{ style: { textAlign: 'center' } }}
+              readOnly={true}
+              value="No Medications mentioned"
+            />
+          ) : (
+            medicalInfo.medications.map((medication, i) => (
+              <form
+                onSubmit={e => handleDelete(e, i)}
+                className={classes.inputContainer}
+              >
+                <InputBase
+                  key={i}
+                  className={edit && classes.list}
+                  inputProps={{ style: { textAlign: 'center' } }}
+                  readOnly={edit ? false : true}
+                  value={medication}
+                  name="medications"
+                  onChange={e => handleChange(e, i)}
+                />
+                {edit && (
+                  <IconButton type="submit" size="small">
+                    <HighlightOffRoundedIcon
+                      style={{ fill: '#ba1e4a' }}
+                      size="small"
+                    />
+                  </IconButton>
+                )}
+              </form>
+            ))
+          )}
+          {edit && (
+            <form
+              onSubmit={handleAdd}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '6px',
               }}
-            />
-            <IconButton type="submit" size="small">
-              <AddIcon size="small" />
-            </IconButton>
-          </form>
-        )}
-      </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Allergies
-        </Typography>
-        {medicalInfo.allergies.length === 0 ? (
-          <InputBase
-            style={{ marginBottom: '1em' }}
-            inputProps={{ style: { textAlign: 'center' } }}
-            readOnly={true}
-            value="No Allergies mentioned"
-          />
-        ) : (
-          medicalInfo.allergies.map((allergy, i) => (
-            <form
-              onSubmit={e => handleDelete(e, i)}
-              className={classes.inputContainer}
             >
-              <InputBase
-                key={i}
-                className={edit && classes.list}
-                inputProps={{ style: { textAlign: 'center' } }}
-                readOnly={edit ? false : true}
-                value={allergy}
-                name="allergies"
-                onChange={e => handleChange(e, i)}
+              <TextField
+                style={{ alignSelf: 'center' }}
+                placeholder="Add.."
+                id="medications"
+                name="medications"
+                value={addInfo.medications}
+                onChange={e => {
+                  setAddInfo({ ...addInfo, [e.target.name]: e.target.value });
+                }}
               />
-              {edit && (
-                <IconButton type="submit" size="small">
-                  <HighlightOffRoundedIcon
-                    style={{ fill: '#ba1e4a' }}
-                    size="small"
-                  />
-                </IconButton>
-              )}
+              <IconButton type="submit" size="small">
+                <AddIcon size="small" />
+              </IconButton>
             </form>
-          ))
-        )}
-        {edit && (
-          <form
-            onSubmit={handleAdd}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '6px',
-            }}
-          >
-            <TextField
-              style={{ alignSelf: 'center' }}
-              placeholder="Add.."
-              name="allergies"
-              value={addInfo.allergies}
-              onChange={e =>
-                setAddInfo({ ...addInfo, [e.target.name]: e.target.value })
-              }
-            />
-            <IconButton type="submit" size="small">
-              <AddIcon size="small" />
-            </IconButton>
-          </form>
-        )}
+          )}
+        </Grid>
       </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Medical Conditions
-        </Typography>
-
-        {medicalInfo.medicalConditions.length === 0 ? (
-          <InputBase
-            style={{ marginBottom: '1em' }}
-            inputProps={{ style: { textAlign: 'center' } }}
-            readOnly={true}
-            value="No Medical Conditions mentioned"
-          />
-        ) : (
-          medicalInfo.medicalConditions.map((condition, i) => (
-            <form
-              onSubmit={e => handleDelete(e, i)}
-              className={classes.inputContainer}
-            >
-              <InputBase
-                key={i}
-                className={edit && classes.list}
-                inputProps={{ style: { textAlign: 'center' } }}
-                readOnly={edit ? false : true}
-                value={condition}
-                name="medicalConditions"
-                onChange={e => handleChange(e, i)}
+      <Grid
+        xs={12}
+        sm={6}
+        item
+        className={classes.gridItem}
+        container
+        spacing={2}
+      >
+        <Grid item xs={12}>
+          <Typography
+            // style={{ marginBottom: edit && '0.5em' }}
+            className={classes.inputLabel}
+            align="center"
+            variant="h6"
+          >
+            Allergies
+          </Typography>
+        </Grid>
+        <Grid item xs={12} style={{ textAlign: 'center' }}>
+          {medicalInfo.allergies.length === 0 ? (
+            <InputBase
+              style={{ marginBottom: '1em' }}
+              inputProps={{ style: { textAlign: 'center' } }}
+              readOnly={true}
+              value="No Allergies mentioned"
+            />
+          ) : (
+            medicalInfo.allergies.map((allergy, i) => (
+              <form
+                onSubmit={e => handleDelete(e, i)}
+                className={classes.inputContainer}
+              >
+                <InputBase
+                  key={i}
+                  className={edit && classes.list}
+                  inputProps={{ style: { textAlign: 'center' } }}
+                  readOnly={edit ? false : true}
+                  value={allergy}
+                  name="allergies"
+                  onChange={e => handleChange(e, i)}
+                />
+                {edit && (
+                  <IconButton type="submit" size="small">
+                    <HighlightOffRoundedIcon
+                      style={{ fill: '#ba1e4a' }}
+                      size="small"
+                    />
+                  </IconButton>
+                )}
+              </form>
+            ))
+          )}
+          {edit && (
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Adrenaline}
+                    onChange={handleAllergiesChange}
+                    name="Adrenaline"
+                  />
+                }
+                label="Adrenaline"
               />
-              {edit && (
-                <IconButton type="submit" size="small">
-                  <HighlightOffRoundedIcon
-                    style={{ fill: '#ba1e4a' }}
-                    size="small"
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Latex}
+                    onChange={handleAllergiesChange}
+                    name="Latex"
                   />
-                </IconButton>
-              )}
-            </form>
-          ))
-        )}
-        {edit && (
-          <form
-            onSubmit={handleAdd}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '6px',
-            }}
-          >
-            <TextField
-              style={{ alignSelf: 'center' }}
-              placeholder="Add.."
-              name="medicalConditions"
-              value={addInfo.medicalConditions}
-              onChange={e =>
-                setAddInfo({ ...addInfo, [e.target.name]: e.target.value })
-              }
-            />
-            <IconButton type="submit" size="small">
-              <AddIcon size="small" />
-            </IconButton>
-          </form>
-        )}
+                }
+                label="Latex"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Pencillin}
+                    onChange={handleAllergiesChange}
+                    name="Pencillin"
+                  />
+                }
+                label="Pencillin"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Ibuprofen}
+                    onChange={handleAllergiesChange}
+                    name="Ibuprofen"
+                  />
+                }
+                label="Ibuprofen"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Codeine}
+                    onChange={handleAllergiesChange}
+                    name="Codeine"
+                  />
+                }
+                label="Codeine"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Aspirin}
+                    onChange={handleAllergiesChange}
+                    name="Aspirin"
+                  />
+                }
+                label="Aspirin"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Iodine}
+                    onChange={handleAllergiesChange}
+                    name="Iodine"
+                  />
+                }
+                label="Iodine"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.Sulfa}
+                    onChange={handleAllergiesChange}
+                    name="Sulfa"
+                  />
+                }
+                label="Sulfa"
+              />
+            </FormGroup>
+            // <form
+            //   onSubmit={handleAdd}
+            //   style={{
+            //     display: 'flex',
+            //     justifyContent: 'center',
+            //     marginBottom: '6px',
+            //   }}
+            // >
+            //   <TextField
+            //     style={{ alignSelf: 'center' }}
+            //     placeholder="Add.."
+            //     name="allergies"
+            //     value={addInfo.allergies}
+            //     onChange={e =>
+            //       setAddInfo({ ...addInfo, [e.target.name]: e.target.value })
+            //     }
+            //   />
+            //   <IconButton type="submit" size="small">
+            //     <AddIcon size="small" />
+            //   </IconButton>
+            // </form>
+          )}
+        </Grid>
       </Grid>
-      <Grid xs={12} sm={6} item className={classes.gridItem}>
-        <Typography
-          style={{ marginBottom: edit && '0.5em' }}
-          className={classes.title}
-          align="center"
-          variant="h5"
-        >
-          Past Surgeries
-        </Typography>
-
-        {medicalInfo.pastSurgeries.length === 0 ? (
-          <InputBase
-            style={{ marginBottom: '1em' }}
-            inputProps={{ style: { textAlign: 'center' } }}
-            readOnly={true}
-            value="No Past Surgeries mentioned"
-          />
-        ) : (
-          medicalInfo.pastSurgeries.map((surgery, i) => (
+      <Grid
+        xs={12}
+        sm={6}
+        item
+        className={classes.gridItem}
+        container
+        spacing={2}
+      >
+        <Grid item xs={12}>
+          <Typography
+            style={{ marginBottom: edit && '0.5em' }}
+            className={classes.title}
+            align="center"
+            variant="h5"
+          >
+            Medical Conditions
+          </Typography>
+        </Grid>
+        <Grid item xs={12} style={{ textAlign: 'center' }}>
+          {medicalInfo.medicalConditions.length === 0 ? (
+            <InputBase
+              style={{ marginBottom: '1em' }}
+              inputProps={{ style: { textAlign: 'center' } }}
+              readOnly={true}
+              value="No Medical Conditions mentioned"
+            />
+          ) : (
+            medicalInfo.medicalConditions.map((condition, i) => (
+              <form
+                onSubmit={e => handleDelete(e, i)}
+                className={classes.inputContainer}
+              >
+                <InputBase
+                  key={i}
+                  className={edit && classes.list}
+                  inputProps={{ style: { textAlign: 'center' } }}
+                  readOnly={edit ? false : true}
+                  value={condition}
+                  name="medicalConditions"
+                  onChange={e => handleChange(e, i)}
+                />
+                {edit && (
+                  <IconButton type="submit" size="small">
+                    <HighlightOffRoundedIcon
+                      style={{ fill: '#ba1e4a' }}
+                      size="small"
+                    />
+                  </IconButton>
+                )}
+              </form>
+            ))
+          )}
+          {edit && (
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.asthma}
+                    onChange={handleConditionsChange}
+                    name="asthma"
+                  />
+                }
+                label="Asthma"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.bleeding}
+                    onChange={handleConditionsChange}
+                    name="bleeding"
+                  />
+                }
+                label="Bleeding Problems"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.cancer}
+                    onChange={handleConditionsChange}
+                    name="cancer"
+                  />
+                }
+                label="Cancer"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.diabetes}
+                    onChange={handleConditionsChange}
+                    name="diabetes"
+                  />
+                }
+                label="Diabetes"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.bloodPressure}
+                    onChange={handleConditionsChange}
+                    name="bloodPressure"
+                  />
+                }
+                label="Blood Pressure"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.liverDisease}
+                    onChange={handleConditionsChange}
+                    name="liverDisease"
+                  />
+                }
+                label="Liver Disease"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.kidneyDisease}
+                    onChange={handleConditionsChange}
+                    name="kidneyDisease"
+                  />
+                }
+                label="Kidney Disease"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.heartProblems}
+                    onChange={handleConditionsChange}
+                    name="heartProblems"
+                  />
+                }
+                label="Heart Problems"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.stroke}
+                    onChange={handleConditionsChange}
+                    name="stroke"
+                  />
+                }
+                label="Heart Stroke"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={allergies.pregnancy}
+                    onChange={handleConditionsChange}
+                    name="pregnancy"
+                  />
+                }
+                label="Pregnancy"
+              />
+            </FormGroup>
+            // <form
+            //   onSubmit={handleAdd}
+            //   style={{
+            //     display: 'flex',
+            //     justifyContent: 'center',
+            //     marginBottom: '6px',
+            //   }}
+            // >
+            //   <TextField
+            //     style={{ alignSelf: 'center' }}
+            //     placeholder="Add.."
+            //     name="medicalConditions"
+            //     value={addInfo.medicalConditions}
+            //     onChange={e =>
+            //       setAddInfo({ ...addInfo, [e.target.name]: e.target.value })
+            //     }
+            //   />
+            //   <IconButton type="submit" size="small">
+            //     <AddIcon size="small" />
+            //   </IconButton>
+            // </form>
+          )}
+        </Grid>
+      </Grid>
+      <Grid
+        xs={12}
+        sm={6}
+        item
+        className={classes.gridItem}
+        container
+        spacing={2}
+      >
+        <Grid item xs={12}>
+          <Typography
+            style={{ marginBottom: edit && '0.5em' }}
+            className={classes.title}
+            align="center"
+            variant="h5"
+          >
+            Past Surgeries
+          </Typography>
+        </Grid>
+        <Grid item xs={12} style={{ textAlign: 'center' }}>
+          {medicalInfo.pastSurgeries.length === 0 ? (
+            <InputBase
+              style={{ marginBottom: '1em' }}
+              inputProps={{ style: { textAlign: 'center' } }}
+              readOnly={true}
+              value="No Past Surgeries mentioned"
+            />
+          ) : (
+            medicalInfo.pastSurgeries.map((surgery, i) => (
+              <form
+                onSubmit={e => handleDelete(e, i)}
+                className={classes.inputContainer}
+              >
+                <InputBase
+                  key={i}
+                  className={edit && classes.list}
+                  inputProps={{ style: { textAlign: 'center' } }}
+                  readOnly={edit ? false : true}
+                  value={surgery}
+                  name="pastSurgeries"
+                  onChange={e => handleChange(e, i)}
+                />
+                {edit && (
+                  <IconButton type="submit" size="small">
+                    <HighlightOffRoundedIcon
+                      style={{ fill: '#ba1e4a' }}
+                      size="small"
+                    />
+                  </IconButton>
+                )}
+              </form>
+            ))
+          )}
+          {edit && (
             <form
-              onSubmit={e => handleDelete(e, i)}
-              className={classes.inputContainer}
+              onSubmit={handleAdd}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '6px',
+              }}
             >
-              <InputBase
-                key={i}
-                className={edit && classes.list}
-                inputProps={{ style: { textAlign: 'center' } }}
-                readOnly={edit ? false : true}
-                value={surgery}
+              <TextField
+                size="large"
+                style={{ alignSelf: 'center' }}
+                placeholder="Add.."
                 name="pastSurgeries"
-                onChange={e => handleChange(e, i)}
+                value={addInfo.pastSurgeries}
+                onChange={e =>
+                  setAddInfo({ ...addInfo, [e.target.name]: e.target.value })
+                }
               />
-              {edit && (
-                <IconButton type="submit" size="small">
-                  <HighlightOffRoundedIcon
-                    style={{ fill: '#ba1e4a' }}
-                    size="small"
-                  />
-                </IconButton>
-              )}
+              <IconButton type="submit" size="small">
+                <AddIcon size="small" />
+              </IconButton>
             </form>
-          ))
-        )}
-        {edit && (
-          <form
-            onSubmit={handleAdd}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '6px',
-            }}
-          >
-            <TextField
-              size="large"
-              style={{ alignSelf: 'center' }}
-              placeholder="Add.."
-              name="pastSurgeries"
-              value={addInfo.pastSurgeries}
-              onChange={e =>
-                setAddInfo({ ...addInfo, [e.target.name]: e.target.value })
-              }
-            />
-            <IconButton type="submit" size="small">
-              <AddIcon size="small" />
-            </IconButton>
-          </form>
-        )}
+          )}
+        </Grid>
       </Grid>
       <Grid
         xs={12}

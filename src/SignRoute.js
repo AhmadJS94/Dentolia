@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Route, Redirect } from 'react-router-dom';
 import { UserData } from './Contexts/UserDataContext';
 import { useQuery } from 'react-query';
+import { Dashboard } from '@material-ui/icons';
 const authCheck = async () => {
   let config = {
     headers: {
@@ -18,7 +19,7 @@ const authCheck = async () => {
     return json.message;
   }
 };
-export default function ProtectedRoute({ component: Component, ...rest }) {
+export default function SignRoute({ component: Component, ...rest }) {
   const { data, status } = useQuery('auth', authCheck);
   // const { isAuthed } = useContext(UserData);
   console.log(status);
@@ -28,11 +29,12 @@ export default function ProtectedRoute({ component: Component, ...rest }) {
       {...rest}
       render={props =>
         status === 'success' && data === 'Verified' ? (
-          <Component {...props} />
-        ) : status === 'success' && data !== 'Verified' ? (
+          //   <Dashboard {...props} />
           <Redirect
-            to={{ pathname: '/login', state: { from: props.location } }}
+            to={{ pathname: '/dashboard', state: { from: props.location } }}
           />
+        ) : status === 'success' && data !== 'Verified' ? (
+          <Component {...props} />
         ) : (
           <div>Loading</div>
         )

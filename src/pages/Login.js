@@ -18,7 +18,10 @@ import {
   InputLabel,
   OutlinedInput,
   FormControl,
+  Snackbar,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -51,6 +54,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login({ history }) {
   const [isLoading, setLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const emailReg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
   const schema = Joi.object({
@@ -102,18 +106,19 @@ export default function Login({ history }) {
         .post('http://localhost:5000/login', formData)
         .then(res => {
           setLoading(false);
-          console.log(res.data);
+
           localStorage.token = res.data;
           history.push('/dashboard');
         })
         .catch(err => {
           setLoading(false);
-          if (err.response) {
+          if (!err.response) {
+            setSnackbarOpen(true);
+          } else if (err.response.data.message.includes('Invalid')) {
+            console.log(err.response);
             setErrors({
               email: err.response.data.message,
             });
-          } else {
-            console.log(`No Internet`);
           }
         });
     } else {
@@ -123,6 +128,15 @@ export default function Login({ history }) {
   return (
     <div className={classes.root}>
       <Navbar />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="error">
+          Something went wrong, Please try again
+        </Alert>
+      </Snackbar>
       <form onSubmit={handleSubmit}>
         <Grid
           className={classes.formContainer}
@@ -167,9 +181,9 @@ export default function Login({ history }) {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                error={Boolean(errors.password)}
-                helperText={Boolean(errors.password) && errors.password}
                 size="small"
+                error={Boolean(errors.email)}
+                helperText={Boolean(errors.email) && errors.email}
               />
             </Grid>
 

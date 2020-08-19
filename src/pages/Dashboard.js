@@ -13,6 +13,7 @@ import {
   IconButton,
   Divider,
   Button,
+  useMediaQuery,
 } from '@material-ui/core';
 import moment from 'moment';
 import AppointmentsAccordion from '../components/AppointmentsAccordion';
@@ -40,9 +41,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     // margin: '1em',
   },
-  appointmentContainer: {
-    // margin: '1em',
-  },
+  appointmentContainer: {},
   paper: {
     padding: theme.spacing(1),
     height: 'auto',
@@ -52,7 +51,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    padding: '1em',
+    // padding: '1em',
+    flexWrap: 'wrap',
   },
 }));
 export default function Dashboard({ history }) {
@@ -67,6 +67,7 @@ export default function Dashboard({ history }) {
   const [appointments, setAppointments] = useState([]);
   const [isAppointmentsLoading, setAppointmentsLoading] = useState(false);
   const [appointmentsToFetch, setAppointmentsToFetch] = useState(moment());
+  // const max440 = useMediaQuery('(max-width:440px)');
   const resolveDay = hour => {
     let text = '';
     switch (hour) {
@@ -127,41 +128,59 @@ export default function Dashboard({ history }) {
   return (
     <div className={classes.root}>
       <DashboardNavbar />
-      <Grid container spacing={2} className={classes.container}>
-        <Grid item xs={12} sm={6} className={classes.panel}>
-          <div className={classes.welcome}>
-            <Typography align="center" variant="h2">
-              {resolveDay()} Dr.{`${officeName}`} !
-            </Typography>
-          </div>
-          <div>
-            <Typography
-              align="center"
-              variant="h6"
-            >{`${today} ${date}/${month}/${year}`}</Typography>
-            <Typography align="center" variant="h4">
-              {`${hour}:${minute}:${second}`}
-            </Typography>
-          </div>
-          <div className={classes.panelButtons}>
-            <Button variant="contained" color="primary">
-              Check In Patient
-            </Button>
-            <Button variant="contained" color="primary">
-              Create new Patient
-            </Button>
-          </div>
-        </Grid>
+      <div style={{ padding: '1em' }}>
+        <Grid container spacing={2} className={classes.container}>
+          <Grid item xs={12} sm={12} md={6} className={classes.panel}>
+            <div className={classes.welcome}>
+              <Typography align="center" variant="h2">
+                {resolveDay()} Dr.{`${officeName}`} !
+              </Typography>
+            </div>
+            <div>
+              <Typography
+                align="center"
+                variant="h6"
+              >{`${today} ${date}/${month}/${year}`}</Typography>
+              <Typography align="center" variant="h4">
+                {`${hour}:${minute}:${second}`}
+              </Typography>
+            </div>
+            <div className={classes.panelButtons}>
+              <Button
+                // size={max440 ? 'small' : 'medium'}
+                style={{ margin: '0.5em 0' }}
+                variant="contained"
+                color="primary"
+              >
+                Check In Patient
+              </Button>
+              <Button
+                // size={max440 ? 'small' : 'medium'}
+                style={{ margin: '0.5em 0' }}
+                variant="contained"
+                color="primary"
+              >
+                Create new Patient
+              </Button>
+            </div>
+          </Grid>
 
-        <Grid item xs={12} sm={6} className={classes.appointmentContainer}>
-          <DashboardAppointmentsTable
-            appointments={appointments}
-            appointmentsToFetch={appointmentsToFetch}
-            setAppointmentsToFetch={setAppointmentsToFetch}
-            isAppointmentsLoading={isAppointmentsLoading}
-          />
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={6}
+            className={classes.appointmentContainer}
+          >
+            <DashboardAppointmentsTable
+              appointments={appointments}
+              appointmentsToFetch={appointmentsToFetch}
+              setAppointmentsToFetch={setAppointmentsToFetch}
+              isAppointmentsLoading={isAppointmentsLoading}
+            />
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
     </div>
   );
 }
