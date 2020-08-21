@@ -18,37 +18,52 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  DialogContentText,
+  List,
+  ListItem,
+  ListItemText,
+  Slide,
+  Snackbar,
+  CircularProgress,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import moment from 'moment';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-// const menuProps = {
-//   anchorOrigin: {
-//     vertical: 'bottom',
-//     horizontal: 'left',
-//   },
-//   transformOrigin: {
-//     vertical: 'top',
-//     horizontal: 'left',
-//   },
-//   getContentAnchorEl: null,
-// };
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { green } from '@material-ui/core/colors';
+
+const bloodTypes = [
+  'Not defined',
+  'A+',
+  'A-',
+  'B+',
+  'B-',
+  'AB+',
+  'AB-',
+  'O+',
+  'O-',
+];
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 const useStyles = makeStyles(theme => ({
   container: {
     // marginTop: theme.spacing(2),
     padding: theme.spacing(2),
   },
   inputLabel: {
-    marginBottom: theme.spacing(1),
     color: 'black',
+    fontWeight: 'bold',
   },
   list: {
     alignSelf: 'center',
     border: '1px solid rgba(221, 216, 216, 0.7)',
     outline: '0',
     borderRadius: '7px',
+    padding: '6px 3px 7px',
     transition: 'all 0.2s ease',
 
     '&:focus': {
@@ -59,24 +74,52 @@ const useStyles = makeStyles(theme => ({
       border: '1px solid #555',
     },
   },
-  inputLabel: {
-    color: 'black',
+
+  noteList: {
+    cursor: 'pointer',
+    textAlign: 'center',
+  },
+  buttonProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -9,
+    marginLeft: -12,
   },
 }));
-export default function MedicalForm() {
+export default function MedicalForm(props) {
+  const { _id } = useParams();
   const classes = useStyles();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [newNoteDialogOpen, setNewNoteDialogOpen] = useState(false);
+  const [notePreviewDialogOpen, setNotePreviewDialogOpen] = useState(false);
   const [noteData, setNoteData] = useState({
     title: '',
     content: '',
   });
+  const [noteEdit, setNoteEdit] = useState(false);
   const [formData, setFormData] = useState({
     patientName: 'Ahmad Zaaza',
     date: moment(),
-
+    bloodType: '',
     medications: [],
     pastSurgeries: [],
   });
+  const [errorSnackBarOpen, setErrorSnackBarOpen] = useState(false);
+  const [successSnackBarOpen, setSuccessSnackBarOpen] = useState(false);
+  const toggleSuccessSnackBar = () => {
+    setSuccessSnackBarOpen(!successSnackBarOpen);
+  };
+  const toggleErrorSnackBar = () => {
+    setErrorSnackBarOpen(!errorSnackBarOpen);
+  };
+  const handleBloodTypeChange = e => {
+    setFormData({
+      ...formData,
+      bloodType: e.target.value,
+    });
+  };
   const handleChange = (e, i) => {
     const name = e.target.name;
     console.log(e.target.value);
@@ -99,6 +142,12 @@ export default function MedicalForm() {
     });
   };
   const [notes, setNotes] = useState([]);
+  const [socialHabits, setSocialHabits] = useState({
+    smoking: false,
+    alcohol: false,
+    soda: false,
+    nuts: false,
+  });
   const [allergies, setAllergies] = useState({
     adrenaline: false,
     aspirin: false,
@@ -116,10 +165,10 @@ export default function MedicalForm() {
     diabetes: false,
     bloodPressure: false,
     liverDisease: false,
-    pregnant: false,
+    pregnancy: false,
     kidneyDisease: false,
     heartProblems: false,
-    stroke: false,
+    heartStroke: false,
   });
   const [addInfo, setAddInfo] = useState({
     medications: '',
@@ -129,6 +178,16 @@ export default function MedicalForm() {
     let note = [...notes];
     note.push(noteData);
     setNotes(note);
+    setNewNoteDialogOpen(false);
+    setNoteData({ title: '', content: '' });
+  };
+  const handleNoteEdit = i => {
+    let note = [...notes];
+    note[i] = { title: noteData.title, content: noteData.content };
+    setNotes(note);
+    setNoteData({ title: '', content: '' });
+    setNotePreviewDialogOpen(false);
+    setNoteEdit(false);
   };
   const handleAdd = e => {
     e.preventDefault();
@@ -147,6 +206,12 @@ export default function MedicalForm() {
       [name]: '',
     });
   };
+  const handleHabitsChange = e => {
+    setSocialHabits({
+      ...socialHabits,
+      [e.target.name]: e.target.checked,
+    });
+  };
   const handleAllergiesChange = e => {
     setAllergies({
       ...allergies,
@@ -159,7 +224,11 @@ export default function MedicalForm() {
       [e.target.name]: e.target.checked,
     });
   };
-
+  let config = {
+    headers: {
+      authorization: `Bearer ${localStorage.token}`,
+    },
+  };
   const handleSubmit = e => {
     e.preventDefault();
     let data = {
@@ -169,12 +238,43 @@ export default function MedicalForm() {
       medications: formData.medications,
       pastSurgeries: formData.pastSurgeries,
       specialNotes: notes,
+      socialHabits: socialHabits,
+      bloodType: formData.bloodType,
     };
-    console.log(data);
+    setLoading(true);
+    axios
+      .post(
+        `http://localhost:5000/api/patients/${_id}/forms/medical`,
+        data,
+        config
+      )
+      .then(res => {
+        if (res.data.message === 'Success') {
+          setLoading(false);
+          toggleSuccessSnackBar();
+        } else {
+          setLoading(false);
+          toggleErrorSnackBar();
+        }
+      });
   };
 
   return (
     <>
+      <Snackbar
+        open={successSnackBarOpen}
+        autoHideDuration={4500}
+        onClose={toggleSuccessSnackBar}
+      >
+        <Alert severity="success">Medical Form Created Successfully</Alert>
+      </Snackbar>
+      <Snackbar
+        open={errorSnackBarOpen}
+        autoHideDuration={4500}
+        onClose={toggleErrorSnackBar}
+      >
+        <Alert severity="error">Something went Wrong, Please try again</Alert>
+      </Snackbar>
       <Grid
         container
         direction="column"
@@ -411,9 +511,9 @@ export default function MedicalForm() {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={allergies.stroke}
+                    checked={allergies.heartStroke}
                     onChange={handleConditionsChange}
-                    name="stroke"
+                    name="heartStroke"
                   />
                 }
                 label="Heart Stroke"
@@ -555,30 +655,201 @@ export default function MedicalForm() {
         </Grid>
         <Grid item container spacing={1}>
           <Grid item xs={12} style={{ textAlign: 'center' }}>
-            <Typography variant="h4">Special Notes</Typography>
+            <Typography variant="h4">Social Habits</Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider />
           </Grid>
           <Grid item xs={12}>
+            <FormGroup row style={{ justifyContent: 'space-evenly' }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={socialHabits.smoking}
+                    onChange={handleHabitsChange}
+                    name="smoking"
+                  />
+                }
+                label="Smoking"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={socialHabits.alcohol}
+                    onChange={handleHabitsChange}
+                    name="alcohol"
+                  />
+                }
+                label="Alcohol"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={socialHabits.nuts}
+                    onChange={handleHabitsChange}
+                    name="nuts"
+                  />
+                }
+                label="Nuts"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={socialHabits.soda}
+                    onChange={handleHabitsChange}
+                    name="soda"
+                  />
+                }
+                label="Soda"
+              />
+            </FormGroup>
+          </Grid>
+        </Grid>
+        <Grid item container spacing={1}>
+          <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Typography variant="h4">Special Notes</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid item container justify="center" xs={12}>
+            <Grid item xs={4} style={{ textAlign: 'center' }}>
+              {notes.length === 0 ? (
+                <Typography variant="subtitle1">No Notes</Typography>
+              ) : (
+                <List>
+                  {notes.map((note, i) => (
+                    <>
+                      <ListItem
+                        onClick={() => {
+                          setNotePreviewDialogOpen(true);
+                          setNoteData({
+                            title: note.title,
+                            content: note.content,
+                          });
+                        }}
+                        button
+                        className={classes.noteList}
+                        key={i}
+                      >
+                        <ListItemText
+                          primary={note.title}
+                          secondary={note.content}
+                        />
+                      </ListItem>
+                      <Dialog
+                        TransitionComponent={Transition}
+                        maxWidth={'sm'}
+                        fullWidth={true}
+                        open={notePreviewDialogOpen}
+                        onClose={() => setNotePreviewDialogOpen(false)}
+                      >
+                        <DialogTitle>
+                          <Typography align="center" variant="h6">
+                            Note Details
+                          </Typography>
+                        </DialogTitle>
+                        <DialogContent>
+                          <Typography
+                            variant="subtitle1"
+                            className={classes.inputLabel}
+                          >
+                            Note Title :
+                          </Typography>
+                          <InputBase
+                            fullWidth
+                            readOnly={noteEdit ? false : true}
+                            variant="outlined"
+                            value={noteData.title}
+                            className={noteEdit && classes.list}
+                            name="title"
+                            onChange={e =>
+                              setNoteData({
+                                ...noteData,
+                                title: e.target.value,
+                              })
+                            }
+                          />
+                          <Typography
+                            variant="subtitle1"
+                            className={classes.inputLabel}
+                          >
+                            Note Content :
+                          </Typography>
+                          <InputBase
+                            fullWidth
+                            name="content"
+                            rows={5}
+                            variant="outlined"
+                            multiline
+                            value={noteData.content}
+                            className={noteEdit && classes.list}
+                            onChange={e =>
+                              setNoteData({
+                                ...noteData,
+                                content: e.target.value,
+                              })
+                            }
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={() => setNoteEdit(!noteEdit)}
+                            variant="contained"
+                            endIcon={<EditIcon />}
+                            size="small"
+                          >
+                            Edit Note
+                          </Button>
+                          {noteEdit && (
+                            <Button
+                              color="primary"
+                              onClick={() => handleNoteEdit(i)}
+                            >
+                              Save
+                            </Button>
+                          )}
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              setNewNoteDialogOpen(false);
+                              setNoteData({ title: '', content: '' });
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </>
+                  ))}
+                </List>
+              )}
+            </Grid>
+          </Grid>
+          <Grid item xs={12} style={{ textAlign: 'center' }}>
             <Button
               color="primary"
               variant="contained"
               endIcon={<AddIcon />}
-              onClick={() => setDialogOpen(true)}
+              onClick={() => setNewNoteDialogOpen(true)}
             >
               Add Note
             </Button>
             <Dialog
+              TransitionComponent={Transition}
               maxWidth={'sm'}
               fullWidth={true}
-              open={dialogOpen}
-              onClose={() => setDialogOpen(false)}
+              open={newNoteDialogOpen}
+              onClose={() => setNewNoteDialogOpen(false)}
             >
-              <DialogTitle>Add a Note</DialogTitle>
+              <DialogTitle>
+                <Typography variant="h6" align="center">
+                  New Note
+                </Typography>
+              </DialogTitle>
               <DialogContent>
                 <Typography variant="subtitle1" className={classes.inputLabel}>
-                  Note Title
+                  Note Title :
                 </Typography>
                 <TextField
                   fullWidth
@@ -590,10 +861,11 @@ export default function MedicalForm() {
                   }
                 />
                 <Typography variant="subtitle1" className={classes.inputLabel}>
-                  Note Content
+                  Note Content :
                 </Typography>
                 <TextField
                   fullWidth
+                  margin="dense"
                   rows={5}
                   variant="outlined"
                   multiline
@@ -604,21 +876,62 @@ export default function MedicalForm() {
                 />
               </DialogContent>
               <DialogActions>
+                <Button color="primary" onClick={handleAddNote}>
+                  Save
+                </Button>
                 <Button
                   color="primary"
-                  variant="outlined"
-                  onClick={handleAddNote}
+                  onClick={() => {
+                    setNewNoteDialogOpen(false);
+                    setNoteData({ title: '', content: '' });
+                  }}
                 >
-                  Save
+                  Cancel
                 </Button>
               </DialogActions>
             </Dialog>
           </Grid>
         </Grid>
-        <Grid item xs={12} style={{ textAlign: 'center' }}>
-          <Button color="primary" variant="contained" onClick={handleSubmit}>
-            Submit
+        <Grid item xs={12}>
+          <Divider />
+        </Grid>
+        <Grid item container spacing={1}>
+          <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Typography variant="h4">Blood Type</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid item xs={12} style={{ textAlign: 'center' }}>
+            <Select
+              value={formData.bloodType}
+              onChange={handleBloodTypeChange}
+              style={{ padding: 0 }}
+            >
+              {bloodTypes.map((type, i) => (
+                <MenuItem key={i} value={type}>
+                  {type}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          style={{ textAlign: 'center', position: 'relative' }}
+        >
+          <Button
+            disabled={isLoading && true}
+            color="primary"
+            variant="contained"
+            onClick={handleSubmit}
+          >
+            Submit Form
           </Button>
+          {isLoading && (
+            <CircularProgress size={20} className={classes.buttonProgress} />
+          )}
         </Grid>
       </Grid>
     </>

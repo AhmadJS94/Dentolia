@@ -35,6 +35,33 @@ import Test from './Test';
 import MedicalForm from './components/SinglePatientComponents/Forms/MedicalForm';
 
 const theme = createMuiTheme({
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '*': {
+          'scrollbar-width': 'thin',
+        },
+        '*::-webkit-scrollbar': {
+          width: '4px',
+          height: '4px',
+        },
+      },
+    },
+  },
+  // overrides:{
+  // '@global': {
+  //   '*::-webkit-scrollbar': {
+  //     width: '0.4em',
+  //   },
+  //   '*::-webkit-scrollbar-track': {
+  //     '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)',
+  //   },
+  //   '*::-webkit-scrollbar-thumb': {
+  //     backgroundColor: 'rgba(0,0,0,.1)',
+  //     outline: '1px solid slategrey',
+  //   },
+  // }
+  // },
   typography: {
     fontFamily: [
       'Montserrat',
@@ -72,6 +99,11 @@ function App() {
             />
             <ProtectedRoute
               exact
+              path="/patients/:_id/medicalforms/new"
+              component={MedicalForm}
+            />
+            <ProtectedRoute
+              exact
               path="/patients/:_id/"
               // render={props => <SinglePatient {...props} />}
               component={SinglePatient}
@@ -102,7 +134,6 @@ function App() {
             <Route exact path="/lab/labname" component={SingleLab} />
             <Route exact path="/vector" component={Vector} />
             <Route exact path="/test" component={Test} />
-            <Route exact path="/form" component={MedicalForm} />
             <Route
               exact
               path="/patients/ahmadzaaza/sessions/new"

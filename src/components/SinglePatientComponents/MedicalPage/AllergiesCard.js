@@ -43,9 +43,29 @@ const useStyles = makeStyles(theme => ({
     padding: '0px',
   },
 }));
-export default function PatientFormsCard({ medicalForms }) {
+export default function AllergiesCard({ medicalForm }) {
   const classes = useStyles();
-
+  const getAllergies = () => {
+    const arr = [];
+    for (let item in medicalForm.allergies) {
+      if (medicalForm.allergies[item]) {
+        arr.push(
+          <TableRow>
+            <TableCell className={classes.gridHeadTitle}>{item}</TableCell>
+          </TableRow>
+        );
+      }
+    }
+    if (arr.length === 0) {
+      return (
+        <TableRow>
+          <TableCell>No Allergies were mentioned</TableCell>
+        </TableRow>
+      );
+    } else {
+      return arr;
+    }
+  };
   return (
     <Paper className={classes.paper}>
       <Toolbar disableGutters="true" className={classes.toolbar}>
@@ -53,38 +73,16 @@ export default function PatientFormsCard({ medicalForms }) {
           variant="h6"
           style={{ fontSize: '1.2em', fontWeight: 'bold' }}
         >
-          Patient Forms
+          Allergies
         </Typography>
-        <Button
-          color="primary"
-          size="small"
-          className={classes.addButton}
-          variant="contained"
-        >
-          <AddIcon size="small" />
-        </Button>
       </Toolbar>
       <Divider />
       <TableContainer style={{ maxHeight: '248px' }}>
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
-            {/* <TableRow style={{ padding: 0 }}> */}
-            <TableCell className={classes.gridHeadTitle}>Form</TableCell>
-            <TableCell className={classes.gridHeadTitle}>Date</TableCell>
-            {/* </TableRow> */}
+            <TableCell className={classes.gridHeadTitle}>Name</TableCell>
           </TableHead>
-          <TableBody>
-            {medicalForms.map((form, i) => (
-              <TableRow>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.type}
-                </TableCell>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.date}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          <TableBody>{getAllergies()}</TableBody>
         </Table>
       </TableContainer>
     </Paper>

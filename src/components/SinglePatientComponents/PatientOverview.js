@@ -18,6 +18,18 @@ import SpecialNotesCard from './PatientOverview/SpecialNotesCard';
 import GeneralCard from './PatientOverview/GeneralCard';
 
 const useStyles = makeStyles(theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '*::-webkit-scrollbar-track': {
+      '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.50)',
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.5)',
+      outline: '1px solid slategrey',
+    },
+  },
   paper: {
     minHeight: '300px',
     overflowY: 'auto',
@@ -27,11 +39,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
-  innerGrid: {
-    padding: theme.spacing(2),
-  },
 }));
-export default function PatientOverview() {
+export default function PatientOverview({ medicalForms }) {
+  // console.log(medicalForms);
   const classes = useStyles();
   return (
     <Grid container spacing={1}>
@@ -42,7 +52,7 @@ export default function PatientOverview() {
         <UpcomingAppointmentsCard />
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <PatientFormsCard />
+        <PatientFormsCard medicalForms={medicalForms} />
       </Grid>
       <Grid item xs={12} sm={6} md={6}>
         <SpecialNotesCard />

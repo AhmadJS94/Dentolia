@@ -88,7 +88,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   toolbar: {
-    minHeight: '44px',
+    minHeight: '47px',
     display: 'flex',
     justifyContent: 'space-around',
     // padding: '16px',

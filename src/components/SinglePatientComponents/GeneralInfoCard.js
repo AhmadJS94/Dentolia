@@ -92,7 +92,7 @@ export default function GeneralInfoCard({
 
   const classes = useStyles();
   return (
-    <Grid component={Paper} className={classes.container} container spacing={3}>
+    <Grid component={Paper} className={classes.container} container spacing={2}>
       <Grid item container spacing={2} xs={12}>
         <Grid xs={12} sm={10} item>
           <Typography variant="h5">Ahmad Zaaza - Personal info</Typography>

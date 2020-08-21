@@ -80,6 +80,7 @@ const useStyles = makeStyles(theme => ({
   paper: {
     minHeight: '300px',
     overflowY: 'auto',
+    // maxHeight: '300px',
   },
   gridHeadTitle: {
     fontSize: '1em',
@@ -98,7 +99,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0px',
   },
 }));
-export default function UpcomingAppointmentsCard() {
+export default function PastSurgeriesCardCard({ medicalForm }) {
   const classes = useStyles();
 
   return (
@@ -108,35 +109,40 @@ export default function UpcomingAppointmentsCard() {
           variant="h6"
           style={{ fontSize: '1.2em', fontWeight: 'bold' }}
         >
-          Upcoming Appointments
+          Past Surgeries
         </Typography>
-        <Button
-          color="primary"
-          size="small"
-          className={classes.addButton}
-          variant="contained"
-        >
-          <AddIcon size="small" />
-        </Button>
       </Toolbar>
       <Divider />
       <TableContainer style={{ maxHeight: '248px' }}>
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
-            <TableRow style={{ padding: 0 }}>
-              <TableCell className={classes.gridHeadTitle}>Date</TableCell>
-              <TableCell className={classes.gridHeadTitle}>Time</TableCell>
-              <TableCell className={classes.gridHeadTitle}>Procedure</TableCell>
-            </TableRow>
+            {/* <TableRow style={{ padding: 0 }}> */}
+            <TableCell className={classes.gridHeadTitle}>Name</TableCell>
+            {/* <TableCell className={classes.gridHeadTitle}>Date</TableCell> */}
+            {/* </TableRow> */}
           </TableHead>
           <TableBody>
-            {
-              // isAppointmentsLoading ? (
-              //   <CircularProgress />
-              // ) : (
-              //   appointments.map((row, i) => <Row key={i} row={row} />)
-              // )
-            }
+            {medicalForm.pastSurgeries.length === 0 ? (
+              <TableRow>
+                <TableCell>No Past Surgeries were mentioned</TableCell>
+              </TableRow>
+            ) : (
+              <TableRow dense={true}>
+                {medicalForm.pastSurgeries.map((surgery, i) => (
+                  <TableCell>{surgery}</TableCell>
+                ))}
+              </TableRow>
+            )}
+            {/* {medicalForms.length === 0 ? <Typography variant='h6'>No Medications were Mentioned</Typography> : (medicalForms.map((form, i) => (
+              <TableRow>
+                <TableCell className={classes.gridHeadTitle}>
+                  {form.type}
+                </TableCell>
+                <TableCell className={classes.gridHeadTitle}>
+                  {form.date}
+                </TableCell>
+              </TableRow>
+            )))} */}
           </TableBody>
         </Table>
       </TableContainer>

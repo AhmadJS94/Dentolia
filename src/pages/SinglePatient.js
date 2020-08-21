@@ -91,14 +91,17 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(2),
-    minHeight: '87vh',
+    padding: theme.spacing(1),
+    minHeight: '628px',
     overflow: 'auto',
 
-    marginLeft: theme.spacing(10),
+    paddingLeft: theme.spacing(10),
   },
   menuButton: {
     marginRight: 36,
+  },
+  listItem: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
 }));
 export default function Test({
@@ -127,6 +130,7 @@ export default function Test({
   };
   const [personalInfo, setPersonalInfo] = useState(null);
   const [medicalInfo, setMedicalInfo] = useState(null);
+  const [medicalForms, setMedicalForms] = useState([]);
   const [loading, setLoading] = useState(true);
   // const [selectedValue, setSelectedValue] = useState(routeToIndex[page]);
   const [dataToEdit, setDataToEdit] = useState({});
@@ -171,7 +175,8 @@ export default function Test({
         console.log(res.data);
         setPersonalInfo(res.data.personalInfo);
         setMedicalInfo(res.data.medicalInfo);
-        // console.log(patientData);
+        setMedicalForms(res.data.medicalForms);
+
         setLoading(false);
       })
       .catch(err => console.log(err.response));
@@ -203,25 +208,41 @@ export default function Test({
         }}
       >
         <List>
-          <ListItem onClick={() => setSelectedValue(0)} button>
+          <ListItem
+            className={selectedValue === 0 && classes.listItem}
+            onClick={() => setSelectedValue(0)}
+            button
+          >
             <ListItemIcon style={{ marginLeft: '7px' }}>
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary={'Overview'} />
           </ListItem>
-          <ListItem onClick={() => setSelectedValue(1)} button>
+          <ListItem
+            className={selectedValue === 1 && classes.listItem}
+            onClick={() => setSelectedValue(1)}
+            button
+          >
             <ListItemIcon style={{ marginLeft: '7px' }}>
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary={'Personal Info'} />
           </ListItem>
-          <ListItem onClick={() => setSelectedValue(2)} button>
+          <ListItem
+            className={selectedValue === 2 && classes.listItem}
+            onClick={() => setSelectedValue(2)}
+            button
+          >
             <ListItemIcon style={{ marginLeft: '7px' }}>
               <LocalHospitalIcon />
             </ListItemIcon>
             <ListItemText primary={'Health Info'} />
           </ListItem>
-          <ListItem onClick={() => setSelectedValue(2)} button>
+          <ListItem
+            className={selectedValue === 3 && classes.listItem}
+            onClick={() => setSelectedValue(3)}
+            button
+          >
             <ListItemIcon style={{ marginLeft: '7px' }}>
               <LocalHospitalIcon />
             </ListItemIcon>
@@ -251,7 +272,9 @@ export default function Test({
         </List>
       </Drawer>
       <Paper className={classes.content}>
-        {selectedValue === 0 && !loading && <PatientOverview />}
+        {selectedValue === 0 && !loading && (
+          <PatientOverview medicalForms={medicalForms} />
+        )}
         {selectedValue === 1 && !loading && (
           <GeneralInfoCard
             personalInfo={personalInfo}
@@ -261,9 +284,10 @@ export default function Test({
         )}
         {selectedValue === 2 && !loading && (
           <MedicalRecordCard
-            medicalInfo={medicalInfo}
-            setMedicalInfo={setMedicalInfo}
-            updateData={updateData}
+            medicalForms={medicalForms}
+            // setMedicalInfo={setMedicalInfo}
+            // updateData={updateData}
+            _id={_id}
           />
         )}
       </Paper>

@@ -88,7 +88,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   toolbar: {
-    minHeight: '44px',
+    minHeight: '47px',
     display: 'flex',
     justifyContent: 'space-around',
     // padding: '16px',
@@ -120,8 +120,8 @@ export default function SpecialNotesCard() {
         </Button>
       </Toolbar>
       <Divider />
-      <TableContainer>
-        <Table aria-label="collapsible table">
+      <TableContainer style={{ maxHeight: '248px' }}>
+        <Table stickyHeader aria-label="collapsible table">
           <TableHead>
             <TableRow style={{ padding: 0 }}>
               <TableCell className={classes.gridHeadTitle}>Name</TableCell>
