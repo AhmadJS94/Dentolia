@@ -116,33 +116,32 @@ export default function PastSurgeriesCardCard({ medicalForm }) {
       <TableContainer style={{ maxHeight: '248px' }}>
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
-            {/* <TableRow style={{ padding: 0 }}> */}
             <TableCell className={classes.gridHeadTitle}>Name</TableCell>
-            {/* <TableCell className={classes.gridHeadTitle}>Date</TableCell> */}
-            {/* </TableRow> */}
           </TableHead>
           <TableBody>
-            {medicalForm.pastSurgeries.length === 0 ? (
+            {!medicalForm && (
               <TableRow>
-                <TableCell>No Past Surgeries were mentioned</TableCell>
-              </TableRow>
-            ) : (
-              <TableRow dense={true}>
-                {medicalForm.pastSurgeries.map((surgery, i) => (
-                  <TableCell>{surgery}</TableCell>
-                ))}
+                <TableCell className={classes.gridHeadTitle}>
+                  No Medical forms were filled
+                </TableCell>
               </TableRow>
             )}
-            {/* {medicalForms.length === 0 ? <Typography variant='h6'>No Medications were Mentioned</Typography> : (medicalForms.map((form, i) => (
+            {medicalForm && medicalForm.pastSurgeries.length === 0 && (
               <TableRow>
                 <TableCell className={classes.gridHeadTitle}>
-                  {form.type}
-                </TableCell>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.date}
+                  No Past Surgeries were mentioned
                 </TableCell>
               </TableRow>
-            )))} */}
+            )}
+            {medicalForm &&
+              medicalForm.pastSurgeries.length !== 0 &&
+              medicalForm.pastSurgeries.map((surgery, i) => (
+                <TableRow dense={true}>
+                  <TableCell className={classes.gridHeadTitle}>
+                    {surgery}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

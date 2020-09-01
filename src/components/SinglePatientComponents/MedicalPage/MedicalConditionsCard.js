@@ -19,63 +19,7 @@ import {
   Divider,
 } from '@material-ui/core/';
 import AddIcon from '@material-ui/icons/Add';
-// const useRowStyles = makeStyles({
-//   root: {
-//     '& > *': {
-//       borderBottom: 'unset',
-//     },
-//     cursor: 'pointer',
-//     padding: 0,
-//   },
-//   rowCell: {
-//     fontSize: '1.2em',
-//     padding: '8px',
-//     textAlign: 'center',
-//   },
-//   buttonsContainer: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     justifyContent: 'space-evenly',
-//     // alignItems: 'center',
-//   },
-//   innerContainer: {
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'space-evenly',
-//     flexWrap: 'wrap',
-//   },
-//   innerToolbar: {
-//     padding: '4px',
-//     minHeight: '24px',
-//     justifyContent: 'center',
-//   },
-//   innerHeadCell: {
-//     padding: '4px',
-//     textAlign: 'center',
-//     fontWeight: 'bold',
-//     fontSize: '1.2em',
-//     // borderBottom: '1px solid rgb(119, 110, 110)',
-//   },
-//   innerRowCell: {
-//     padding: '4px',
-//     textAlign: 'center',
-//     fontSize: '1.1em',
-//     // borderBottom: '1px solid rgb(119, 110, 110)',
-//   },
-// });
-// function Row(props) {
-//   const { row } = props;
-//   // const [open, setOpen] = React.useState(false);
-//   const classes = useRowStyles();
 
-//   return (
-//     <TableRow className={classes.root}>
-//       <TableCell className={classes.rowCell}>{row.name}</TableCell>
-//       <TableCell className={classes.rowCell}>{row.hour}</TableCell>
-//       <TableCell className={classes.rowCell}>{row.duration}</TableCell>
-//     </TableRow>
-//   );
-// }
 const useStyles = makeStyles(theme => ({
   paper: {
     minHeight: '300px',
@@ -103,24 +47,36 @@ export default function MedicalConditionsCard({ medicalForm }) {
   const classes = useStyles();
   const getMedicalConditions = () => {
     const arr = [];
-    // console.log(medicalForm.date);
-    for (let item in medicalForm.medicalConditions) {
-      if (medicalForm.medicalConditions[item]) {
-        arr.push(
+
+    if (medicalForm) {
+      for (let item in medicalForm.medicalConditions) {
+        if (medicalForm.medicalConditions[item]) {
+          arr.push(
+            <TableRow>
+              <TableCell className={classes.gridHeadTitle}>{item}</TableCell>
+            </TableRow>
+          );
+        }
+      }
+      if (arr.length === 0) {
+        return (
           <TableRow>
-            <TableCell className={classes.gridHeadTitle}>{item}</TableCell>
+            <TableCell className={classes.gridHeadTitle}>
+              No Medical conditions were mentioned
+            </TableCell>
           </TableRow>
         );
+      } else {
+        return arr;
       }
-    }
-    if (arr.length === 0) {
+    } else {
       return (
         <TableRow>
-          <TableCell>No Medical conditions were mentioned</TableCell>
+          <TableCell className={classes.gridHeadTitle}>
+            No Medical forms were filled
+          </TableCell>
         </TableRow>
       );
-    } else {
-      return arr;
     }
   };
   return (
@@ -132,37 +88,14 @@ export default function MedicalConditionsCard({ medicalForm }) {
         >
           Medical Conditions
         </Typography>
-        {/* <Button
-          color="primary"
-          size="small"
-          className={classes.addButton}
-          variant="contained"
-        >
-          <AddIcon size="small" />
-        </Button> */}
       </Toolbar>
       <Divider />
       <TableContainer style={{ maxHeight: '248px' }}>
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
-            {/* <TableRow style={{ padding: 0 }}> */}
             <TableCell className={classes.gridHeadTitle}>Name</TableCell>
-            {/* <TableCell className={classes.gridHeadTitle}>Date</TableCell> */}
-            {/* </TableRow> */}
           </TableHead>
-          <TableBody>
-            {getMedicalConditions()}
-            {/* {medicalForms.length === 0 ? <Typography variant='h6'>No Medications were Mentioned</Typography> : (medicalForms.map((form, i) => (
-              <TableRow>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.type}
-                </TableCell>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.date}
-                </TableCell>
-              </TableRow>
-            )))} */}
-          </TableBody>
+          <TableBody>{getMedicalConditions()}</TableBody>
         </Table>
       </TableContainer>
     </Paper>

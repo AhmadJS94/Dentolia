@@ -22,9 +22,10 @@ import SpecialNotesCard from './MedicalPage/SpecialNotesCard';
 import MedicalGeneralCard from './MedicalPage/MedicalGeneralCard';
 const useStyles = makeStyles(theme => ({
   container: {
-    minHeight: '400px',
+    minHeight: '621px',
     // padding: '1em',
     overflow: 'auto',
+    maxHeight: '621 px',
   },
 
   list: {
@@ -72,7 +73,7 @@ export default function MedicalRecordCard({
   };
   const classes = useStyles();
   return (
-    <Grid container spacing={1}>
+    <Grid container className={classes.container} spacing={1}>
       <Grid item xs={12} sm={6} md={5}>
         <MedicalGeneralCard
           medicalForms={medicalForms}

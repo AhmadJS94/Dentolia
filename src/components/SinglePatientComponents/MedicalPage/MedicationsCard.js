@@ -111,46 +111,37 @@ export default function MedicationsCard({ medicalForm }) {
         >
           Medications
         </Typography>
-        {/* <Button
-          color="primary"
-          size="small"
-          className={classes.addButton}
-          variant="contained"
-        >
-          <AddIcon size="small" />
-        </Button> */}
       </Toolbar>
       <Divider />
       <TableContainer style={{ maxHeight: '248px' }}>
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
-            {/* <TableRow style={{ padding: 0 }}> */}
             <TableCell className={classes.gridHeadTitle}>Name</TableCell>
-            {/* <TableCell className={classes.gridHeadTitle}>Date</TableCell> */}
-            {/* </TableRow> */}
           </TableHead>
           <TableBody>
-            {medicalForm.medications.length === 0 ? (
+            {!medicalForm && (
               <TableRow>
-                <TableCell>No Medications were mentioned</TableCell>
-              </TableRow>
-            ) : (
-              <TableRow dense={true}>
-                {medicalForm.medications.map((medication, i) => (
-                  <TableCell>{medication}</TableCell>
-                ))}
+                <TableCell className={classes.gridHeadTitle}>
+                  No Medical forms were filled
+                </TableCell>
               </TableRow>
             )}
-            {/* {medicalForms.length === 0 ? <Typography variant='h6'>No Medications were Mentioned</Typography> : (medicalForms.map((form, i) => (
+            {medicalForm && medicalForm.medications.length === 0 && (
               <TableRow>
                 <TableCell className={classes.gridHeadTitle}>
-                  {form.type}
-                </TableCell>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.date}
+                  No Medications were mentioned
                 </TableCell>
               </TableRow>
-            )))} */}
+            )}
+            {medicalForm &&
+              medicalForm.medications.length !== 0 &&
+              medicalForm.medications.map((medication, i) => (
+                <TableRow dense={true}>
+                  <TableCell className={classes.gridHeadTitle}>
+                    {medication}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

@@ -47,23 +47,35 @@ export default function AllergiesCard({ medicalForm }) {
   const classes = useStyles();
   const getAllergies = () => {
     const arr = [];
-    for (let item in medicalForm.allergies) {
-      if (medicalForm.allergies[item]) {
-        arr.push(
+    if (medicalForm) {
+      for (let item in medicalForm.allergies) {
+        if (medicalForm.allergies[item]) {
+          arr.push(
+            <TableRow>
+              <TableCell className={classes.gridHeadTitle}>{item}</TableCell>
+            </TableRow>
+          );
+        }
+      }
+      if (arr.length === 0) {
+        return (
           <TableRow>
-            <TableCell className={classes.gridHeadTitle}>{item}</TableCell>
+            <TableCell className={classes.gridHeadTitle}>
+              No Allergies were mentioned
+            </TableCell>
           </TableRow>
         );
+      } else {
+        return arr;
       }
-    }
-    if (arr.length === 0) {
+    } else {
       return (
         <TableRow>
-          <TableCell>No Allergies were mentioned</TableCell>
+          <TableCell className={classes.gridHeadTitle}>
+            No Medical forms were filled
+          </TableCell>
         </TableRow>
       );
-    } else {
-      return arr;
     }
   };
   return (

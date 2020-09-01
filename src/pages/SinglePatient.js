@@ -32,6 +32,7 @@ import {
 import PatientOverview from '../components/SinglePatientComponents/PatientOverview';
 import GeneralInfoCard from '../components/SinglePatientComponents/GeneralInfoCard';
 import MedicalRecordCard from '../components/SinglePatientComponents/MedicalRecordCard';
+import DentalInfoCard from '../components/SinglePatientComponents/DentalInfoCard';
 const drawerWidth = 200;
 
 const useStyles = makeStyles(theme => ({
@@ -52,6 +53,7 @@ const useStyles = makeStyles(theme => ({
 
     background: 'linear-gradient(45deg,#07AFAF,#7037D2)',
 
+    maxHeight: '100vh',
     minHeight: '100vh',
   },
   toolbar: {
@@ -104,7 +106,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
 }));
-export default function Test({
+export default function SinglePatient({
   match: {
     params: { page, section, _id },
   },
@@ -117,7 +119,7 @@ export default function Test({
   };
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(0);
+  const [selectedValue, setSelectedValue] = useState(3);
   const indexToRoute = {
     0: 'general',
     1: 'medical',
@@ -148,7 +150,22 @@ export default function Test({
   const handleClose = () => {
     setConfirmationOpen(false);
   };
-
+  const deletePatient = async () => {
+    try {
+      let response = await axios.delete(
+        `http://localhost:5000/api/patients/delete/${_id}`,
+        config
+      );
+      console.log(response);
+      if (response) {
+        console.log(response.message);
+        console.log(`deleted`);
+        history.push('/patients');
+      }
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
   const updateData = type => {
     let data;
     if (type === 'personalInfo') {
@@ -273,7 +290,10 @@ export default function Test({
       </Drawer>
       <Paper className={classes.content}>
         {selectedValue === 0 && !loading && (
-          <PatientOverview medicalForms={medicalForms} />
+          <PatientOverview
+            medicalForms={medicalForms}
+            deletePatient={deletePatient}
+          />
         )}
         {selectedValue === 1 && !loading && (
           <GeneralInfoCard
@@ -284,6 +304,14 @@ export default function Test({
         )}
         {selectedValue === 2 && !loading && (
           <MedicalRecordCard
+            medicalForms={medicalForms}
+            // setMedicalInfo={setMedicalInfo}
+            // updateData={updateData}
+            _id={_id}
+          />
+        )}
+        {selectedValue === 3 && !loading && (
+          <DentalInfoCard
             medicalForms={medicalForms}
             // setMedicalInfo={setMedicalInfo}
             // updateData={updateData}

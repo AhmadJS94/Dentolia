@@ -40,13 +40,13 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
 }));
-export default function PatientOverview({ medicalForms }) {
+export default function PatientOverview({ medicalForms, deletePatient }) {
   // console.log(medicalForms);
   const classes = useStyles();
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} sm={6} md={5}>
-        <GeneralCard />
+        <GeneralCard deletePatient={deletePatient} />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
         <UpcomingAppointmentsCard />

@@ -109,48 +109,40 @@ export default function SpecialNotesCard({ medicalForm }) {
           variant="h6"
           style={{ fontSize: '1.2em', fontWeight: 'bold' }}
         >
-          Special Notes
+          Medical Special Notes
         </Typography>
-        {/* <Button
-          color="primary"
-          size="small"
-          className={classes.addButton}
-          variant="contained"
-        >
-          <AddIcon size="small" />
-        </Button> */}
       </Toolbar>
       <Divider />
       <TableContainer style={{ maxHeight: '248px' }}>
         <Table stickyHeader aria-label="collapsible table">
           <TableHead>
-            {/* <TableRow style={{ padding: 0 }}> */}
-            <TableCell className={classes.gridHeadTitle}>Name</TableCell>
-            {/* <TableCell className={classes.gridHeadTitle}>Date</TableCell> */}
-            {/* </TableRow> */}
+            <TableCell className={classes.gridHeadTitle}>Title</TableCell>
           </TableHead>
           <TableBody>
-            {medicalForm.pastSurgeries.length === 0 ? (
+            {!medicalForm && (
               <TableRow>
-                <TableCell>No Special Notes were mentioned</TableCell>
-              </TableRow>
-            ) : (
-              <TableRow dense={true}>
-                {medicalForm.specialNotes.map((note, i) => (
-                  <TableCell>{note.title}</TableCell>
-                ))}
+                <TableCell className={classes.gridHeadTitle}>
+                  No Medical forms were filled
+                </TableCell>
               </TableRow>
             )}
-            {/* {medicalForms.length === 0 ? <Typography variant='h6'>No Medications were Mentioned</Typography> : (medicalForms.map((form, i) => (
+            {medicalForm && medicalForm.pastSurgeries.length === 0 && (
               <TableRow>
                 <TableCell className={classes.gridHeadTitle}>
-                  {form.type}
-                </TableCell>
-                <TableCell className={classes.gridHeadTitle}>
-                  {form.date}
+                  No Special Notes were mentioned
                 </TableCell>
               </TableRow>
-            )))} */}
+            )}
+            {medicalForm &&
+              medicalForm.pastSurgeries.length !== 0 &&
+              medicalForm.specialNotes.map((note, i) => (
+                <TableRow dense={true}>
+                  <TableCell className={classes.gridHeadTitle}>
+                    {note.title}
+                  </TableCell>
+                </TableRow>
+              ))}
+            {}
           </TableBody>
         </Table>
       </TableContainer>

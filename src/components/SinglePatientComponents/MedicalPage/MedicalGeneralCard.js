@@ -62,6 +62,14 @@ export default function MedicalGeneralCard({
       <Divider />
       <Grid className={classes.innerGrid} container>
         <Grid item xs={12} style={{ textAlign: 'center', marginBottom: '8px' }}>
+          {medicalForms.length !== 0 && (
+            <Typography
+              style={{ color: 'red', fontWeight: 'bold' }}
+              variant="subtitle1"
+            >
+              Based on a Medical Form Data on {medicalForm.date}
+            </Typography>
+          )}
           <Typography variant="subtitle1">
             Number of Filled Forms : {medicalForms.length}
           </Typography>
@@ -91,7 +99,7 @@ export default function MedicalGeneralCard({
                   key={i}
                   value={form.date}
                 >
-                  Medical Form at {form.date}
+                  Form at {form.date}
                 </MenuItem>
               ))}
             </TextField>

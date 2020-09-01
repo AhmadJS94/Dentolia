@@ -133,7 +133,7 @@ export default function DashboardNavbar() {
   const [responsiveAnchorEl, setResponsiveAnchorEl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const history = useHistory();
-  console.log(history.location);
+
   const max250 = useMediaQuery('(max-width:250px)');
   const min250 = useMediaQuery('(min-width:250px)');
   const max360 = useMediaQuery('(max-width:360px)');
